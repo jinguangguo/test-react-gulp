@@ -1,0 +1,21 @@
+/**
+ * @file
+ * @author jinguangguo
+ * @date 2015/11/14
+ */
+
+.clearfix {
+    @include clearfix();
+}
+
+.ellipsis {
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    word-break: break-all;
+}
+
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+}

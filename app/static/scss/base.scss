@@ -1,0 +1,16 @@
+/**
+ * @file
+ * @author jinguangguo
+ * @date 2015/11/14
+ */
+
+@import 'common/variable';
+@import 'common/mixin';
+@import 'common/reset';
+@import 'common/function';
+
+.main {
+    width: 920px;
+    margin: 0 auto;
+    padding-top: 50px;
+}

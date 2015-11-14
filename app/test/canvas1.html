@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas图像处理</title>
+    <style>
+        .fn-ib {
+            display: inline-block;
+            vertical-align: top;
+        }
+        button {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas1" class="fn-ib" width="640" height="960"></canvas>
+<div class="button-group fn-ib">
+    <button id="gray">置灰</button>
+    <button id="setColorR">设置为单色</button>
+    <button id="createImageDataTurn">反转</button>
+    <button id="highlight">高亮</button>
+    <button id="removeColor">去色</button>
+    <button id="api">api</button>
+</div>
+<canvas id="canvas2" class="fn-ib" width="640" height="960"></canvas>
+<script src="../../bower_components/jquery/dist/jquery.js"></script>
+<script src="canvas1.js"></script>
+<script>
+
+
+        var canvas1 = document.getElementById('canvas1');
+        var canvas1Context = canvas1.getContext('2d');
+        var image = new Image();
+        image.src = 'img/1111.png';
+        image.onload = function() {
+            canvas1Context.drawImage(image, 0, 0);
+        };
+
+        function getImageDataOfCanvas1() {
+            return canvas1Context.getImageData(0, 0, image.width, image.height);
+        }
+
+        var canvas2 = document.getElementById('canvas2');
+        var canvas2Context = canvas2.getContext('2d');
+
+        var ps = new PS();
+
+        $('#gray').click(function() {
+            var newImageData = ps.gray(canvas1Context, getImageDataOfCanvas1());
+            canvas2Context.putImageData(newImageData, 0, 0);
+        });
+
+        $('#createImageDataTurn').click(function() {
+            var newImageData = ps.createImageDataTurn(canvas2Context, getImageDataOfCanvas1(), 0, 640, 960);
+            canvas2Context.putImageData(newImageData, 0, 0);
+        });
+
+        $('#setColorR').click(function() {
+            var newImageData = ps.setColorB(canvas1Context, getImageDataOfCanvas1(), 2);
+            canvas2Context.putImageData(newImageData, 0, 0);
+        });
+
+        $('#highlight').click(function() {
+            var newImageData = ps.highlight(canvas1Context, getImageDataOfCanvas1(), 50);
+            canvas2Context.putImageData(newImageData, 0, 0);
+        });
+
+        $('#removeColor').click(function() {
+            var newImageData = ps.removeColor(canvas1Context, getImageDataOfCanvas1(), 247, 0, 255);
+            canvas2Context.putImageData(newImageData, 0, 0);
+        });
+
+        $('#api').click(function() {
+            setRotate(canvas1Context);
+        });
+
+        // 将图像输出为base64压缩的字符串  默认为image/png
+        // var data = canvas1.toDataURL();
+
+    function setRotate(ctx, rotate) {
+        var content = ctx.rotate(20 * Math.PI / 180);
+        ctx.fillRect(50,20,100,50);
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>raphaer test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .main {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            width: 1000px;
+            height: 800px;
+            border: 1px red solid;
+        }
+    </style>
+</head>
+<body>
+<div class="main" id="main"></div>
+
+<script src="../../../bower_components/jquery/dist/jquery.js"></script>
+<script src="../../../bower_components/raphael/raphael.js"></script>
+<script>
+    var paper = null;
+    var $main = $('#main');
+
+    // 初始化
+    (function() {
+
+        var width = $main.width();
+        var height = $main.height();
+
+        paper = Raphael($main[0], width, height);
+
+        window.paper = paper;
+
+    })();
+
+    (function() {
+        <!--加载图片-->
+        var imageInstance = paper.image('../../static/img/image2.jpg', 0, 0, 510, 682);
+    })();
+
+    (function() {
+        var arr = [];
+        for (var i = 0; i < 5; i++) {
+            arr[i] = paper.circle(10 + 20 * i, 10, 10)
+                    .attr({
+                        title: '哈哈' + i,
+                        fill: 'white',
+                        stroke: "red",
+                        cursor: 'move'
+                    })
+                    .data("i", i)
+                    .drag(function(dx, dy, x, y, event) {
+                        console.log('x:' + x + ', y:' + y);
+                        console.log('dx:' + dx + ', dy:' + dy);
+
+                        var startCX = this.data('startCX');
+                        var startCY = this.data('startCY');
+
+                        var newRx = startCX + dx;
+                        var newRy = startCY + dy;
+                        console.log('[move] newRx:' + newRx + ', newRy:' + newRy);
+                        this.attr({
+                            cx: newRx,
+                            cy: newRy
+                        });
+                    }, function(x, y, event) {
+                        var rx = this.attr('cx');
+                        var ry = this.attr('cy');
+                        console.log('[start] rx:' + rx + ', ry:' + ry);
+                        console.log('start move ...');
+                        // 开始移动，记录移动的开始坐标
+                        this.data('startCX', rx);
+                        this.data('startCY', ry);
+                    }, function(x, y, event) {
+                        console.log('end move ...');
+                    });
+        }
+//
+//        arr[0].click(function(e) {
+//            this.hide();
+//            console.log('isPointInside:' + this.isPointInside(e.pageX, e.pageY));
+//        });
+//
+//        arr[1].hover(function() {
+//            this.attr();
+//        });
+//
+//        arr[2].mouseover(function() {
+//            console.log('mouseover');
+//        });
+//
+//        arr[2].mouseout(function() {
+//            console.log('mouseout');
+//        });
+//
+//        arr[3].click(function() {
+//            this.rotate(30);
+//        });
+//
+//        arr[4].click((function() {
+//            var count = 0;
+//            return function() {
+//                if (count === 1) {
+//                    this.toBack();
+//                }
+//                count++;
+//                this.scale(1.5, 1.5);
+//            };
+//        }()));
+//
+//        var element = paper.getById(arr[4].id);
+//
+////        setTimeout(function() {
+////            arr[4].toBack();
+////        }, 1500);
+//
+//        Raphael.el.cross = function () {
+//            this.attr({fill: "purple"});
+//            this.paper.path("M10,10L50,50M50,10L10,50")
+//                    .attr({stroke: "red"});
+//        };
+//
+//        var el = paper.rect(10, 20, 300, 200);
+//        // translate 100, 100, rotate 45°, translate -100, 0
+//        el.transform("t100,100r45t-100,0");
+//        // if you want you can append or prepend transformations
+//        el.transform("...t50,50");
+//        el.transform("s2...");
+//        // or even wrap
+//        el.transform("t50,50...t-50-50");
+//        // to reset transformation call method with empty string
+//        el.transform("");
+//        // to get current value call it without parameters
+//        console.log(el.transform());
+//
+//    })();
+//
+//    (function() {
+////        paper.print(300, 300, "Test string", paper.getFont("Times", 800), 30);
+//        var txt = paper.print(10, 50, "print", paper.getFont("Museo"), 30).attr({fill: "#fff"});
+//    })();
+//
+//    (function() {
+//        var ellipse = paper.ellipse(100, 100, 50, 100).drag(function(dx, dy, x, y, event) {
+//            console.log('x:' + x + ', y:' + y);
+//            console.log('dx:' + dx + ', dy:' + dy);
+//
+//            var startCX = this.data('startCX');
+//            var startCY = this.data('startCY');
+//
+//            var newRx = startCX + dx;
+//            var newRy = startCY + dy;
+//            console.log('[move] newRx:' + newRx + ', newRy:' + newRy);
+//            this.attr({
+//                cx: newRx,
+//                cy: newRy
+//            });
+//        }, function(x, y, event) {
+//            var rx = this.attr('cx');
+//            var ry = this.attr('cy');
+//            console.log('[start] rx:' + rx + ', ry:' + ry);
+//            console.log('start move ...');
+//            // 开始移动，记录移动的开始坐标
+//            this.data('startCX', rx);
+//            this.data('startCY', ry);
+//        }, function(x, y, event) {
+//            console.log('end move ...');
+//        });
+//
+//        ellipse.rotate(30);
+//    })();
+//
+//    (function() {
+//        $main.click(function(event) {
+//            var elements = paper.getElementsByPoint(event.pageX, event.pageY);
+//        });
+//    })();
+//    var txt = paper.print(10, 50, "print", paper.getFont("Arial"), 30).attr({
+//        fill: "#000",
+//        stoke: 'purple'
+//    });
+//
+//    var c = paper.rect(10, 10, 50, 50);
+//    // rectangle with rounded corners
+//    var c = paper.rect(40, 40, 50, 50, 10);
+
+
+    var t = paper.text(50, 50, "Raphaël\nkicks\nbutt!");
+    t.rotate(30);
+
+//    (function() {
+//        paper.add([
+//            {
+//                type: "circle",
+//                cx: 100,
+//                cy: 100,
+//                r: 5
+//            },
+//            {
+//                type: "rect",
+//                x: 10,
+//                y: 10,
+//                width: 10,
+//                height: 10,
+//                fill: "#fc0"
+//            }
+//        ]);
+//    })();
+
+//    (function() {
+//        var text = paper.text(10, 10, 't').attr({
+//            'font-family': 'Impact',
+//            'font-size': 24,
+//            stroke: '#000',
+//            fill: '#fff'
+//        });
+//    })();
+//    (function() {
+//        paper.customAttributes.hue = function (num) {
+//            num = num % 1;
+//            return {fill: "hsb(" + num + ", 0.75, 1)"};
+//        };
+//// Custom attribute “hue” will change fill
+//// to be given hue with fixed saturation and brightness.
+//// Now you can use it like this:
+//        var c = paper.circle(10, 10, 10).attr({hue: .45});
+//// or even like this:
+//        c.animate({hue: 1}, 1e3);
+//
+//// You could also create custom attribute
+//// with multiple parameters:
+//        paper.customAttributes.hsb = function (h, s, b) {
+//            return {fill: "hsb(" + [h, s, b].join(",") + ")"};
+//        };
+//        c.attr({hsb: "0.5 .8 1"});
+//        c.animate({hsb: [1, 0, 0.5]}, 1e3);
+//    })();
+
+//    // x, y, w, h
+//    var pager = Raphael(0, 0, 500, 500);
+//
+//    //
+//    var circle = pager.circle(50, 50, 10);
+//
+//    circle.attr('fill', '#f00');
+//
+//    circle.attr('stroke', '#fff');
+
+
+Raphael.angle(1, 1, 1, 1, 1, 1);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "name": "test-react-gulp",
+  "version": "1.0.0",
+  "description": "test react gulp of test",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jinguangguo/test-react-gulp.git"
+  },
+  "keywords": [
+    "react",
+    "gulp"
+  ],
+  "author": "jinguangguo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jinguangguo/test-react-gulp/issues"
+  },
+  "homepage": "https://github.com/jinguangguo/test-react-gulp#readme",
+  "dependencies": {
+    "browserify": "^12.0.1",
+    "express": "^4.13.3",
+    "gulp": "^3.9.0",
+    "hapi": "^8.8.0",
+    "node-sass": "^3.4.2",
+    "reactify": "^1.1.1",
+    "swig": "^1.4.2"
+  }
+}

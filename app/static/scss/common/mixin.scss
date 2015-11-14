@@ -1,0 +1,20 @@
+/**
+ * @file
+ * @author jinguangguo
+ * @date 2015/11/14
+ */
+
+@mixin clearfix() {
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+@mixin borderRadius($no) {
+    -webkit-border-radius: $no;
+    -moz-border-radius: $no;
+    -ms-border-radius: $no;
+    border-radius: $no;
+}
