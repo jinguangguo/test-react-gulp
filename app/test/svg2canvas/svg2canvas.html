@@ -17,31 +17,4 @@ window.onload = function() {
 
 };
 </script>
-<script>
-    var a = 0;
-    var b = 0;
-    var c = 0;
-
-    var F1 = function(a) {
-        return function(b) {
-            console.log(a++, b++, c++);
-        };
-    };
-
-    var F2 = function(b) {
-        return function(a) {
-            console.log(a++, b++, c++);
-        };
-    };
-
-    var f1 = F1(b);
-    var f2 = F1(a);
-
-    f1(a);
-    f1(b);
-
-    f2(a);
-    f1(a);
-
-</script>
 </body>

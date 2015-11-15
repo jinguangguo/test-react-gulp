@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>继承之临时构造函数</title>
+</head>
+<body>
+<script>
+    (function() {
+        function Parent(name) {
+            this.name = name || 'kingParent';
+            this.age = 20;
+        }
+        Parent.prototype = {
+            version: 'pp1.0',
+            getVersion: function() {
+                return this.version;
+            }
+        };
+        Parent.prototype.version = 'pp1.0';
+
+        function Child() {
+
+        }
+        function inherit(C, P) {
+            var F = function() {
+
+            };
+            F.prototype = P.prototype;
+            C.prototype = new F();
+            C.prototype.constructor = C;
+        }
+        inherit(Child, Parent);
+        var c1 = new Child();
+        var c2 = new Child();
+        c2.age = 30;
+        Child.prototype.version = 'cp1.0';
+        console.log(c1.name);
+        Parent.prototype.version = 'pp2.0';
+        console.log(c2.getVersion());
+        console.log(c2.constructor);
+    })();
+</script>
+</body>
+</html>

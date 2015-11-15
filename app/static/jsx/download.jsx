@@ -2,8 +2,6 @@
 
 var helper = require('../../widget/util/helper');
 
-console.log(helper.parseName('king'));
-
 var Download = React.createClass({
 
     render: function() {

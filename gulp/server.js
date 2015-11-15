@@ -6,6 +6,8 @@
 
 var gulp = require('gulp');
 
+var fs = require('fs');
+
 var Hapi = require('hapi');
 
 var swig = require('swig');
@@ -75,11 +77,17 @@ gulp.task('server:start', function() {
 
             switch (fileInfo.fileType) {
                 case 'css':
-                    reply(
-                        nodeSass.renderSync({
-                            file: fileInfo.directoryPath + '.scss'
-                        }).css
-                    ).type('text/css');
+                    fs.exists(fileInfo.filePath, function(exists) {
+                        if (exists) {
+                            reply.file(fileInfo.filePath);
+                        } else {
+                            reply(
+                                nodeSass.renderSync({
+                                    file: fileInfo.directoryPath + '.scss'
+                                }).css
+                            ).type('text/css');
+                        }
+                    });
                     break;
                 case 'html':
                     var template = swig.compileFile(fileInfo.filePath);

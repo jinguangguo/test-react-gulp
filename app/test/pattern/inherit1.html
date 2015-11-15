@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>继承之设置原型</title>
+</head>
+<body>
+<script>
+    (function() {
+        function Parent(name) {
+            this.name = name || 'kingParent';
+        }
+
+        Parent.prototype = {
+            version: 'pp1.0',
+            getName: function() {
+                return this.name;
+            }
+        };
+
+        function Child(name) {
+            this.name = name || 'kingChild';
+        }
+
+        Child.prototype = new Parent();
+
+        var c1 = new Child('kingChild1');
+        var c2 = new Child('kingChild2');
+
+        c2.age = 30;
+
+        Child.prototype.version = 'cp1.0';
+
+        Parent.prototype.version = 'pp2.0';
+
+        console.log(c2.getName());
+    })();
+</script>
+</body>
+</html>
