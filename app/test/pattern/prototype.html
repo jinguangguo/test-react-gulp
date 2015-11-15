@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>prototype</title>
+</head>
+<body>
+<script>
+    var Person = function(name, birthday) {
+        this.name = name;
+        this.birthday = birthday;   // timestamp
+    };
+    Person.prototype = {
+        setName: function(name) {
+            this.name = name;
+        },
+        getName: function() {
+            return this.name;
+        },
+        /**
+         * 设置生日
+         * @param dateString
+         */
+        setBirthday: function(dateString) {
+            this.birthday = this._getTimestampOfInput(dateString);
+        },
+        /**
+         * 根据用户输入来获取时间戳，如输入'1995-10-05'
+         * @param timestamp
+         * @returns {string}
+         * @private
+         */
+        _getTimestampOfInput: function(dateString) {
+            return new Date(dateString).getTime();
+        },
+        /**
+         * 获取生日
+         * @returns {*}
+         */
+        getBirthday: function() {
+            return this._getFormattedDay(this.birthday);
+        },
+        /**
+         * 生日格式化显示
+         * @param timestamp
+         * @returns {string}
+         * @private
+         */
+        _getFormattedDay: function(timestamp) {
+            var datetime = new Date(timestamp);
+            var year = datetime.getFullYear();
+            var month = datetime.getMonth() + 1;
+            var date = datetime.getDate();
+            return year + (String(month).length < 2 ? "0" + month : month) + "-"
+                    + (String(date).length < 2 ? "0" + date : date);
+        }
+    };
+
+</script>
+</body>
+</html>
