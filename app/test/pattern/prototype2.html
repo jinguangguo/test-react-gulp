@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>prototype1 - 不要把缓存变量放置于this中</title>
+</head>
+<body>
+<script>
+    var Person = function(name, birthday) {
+        this.name = name;
+        this.birthday = birthday;   // timestamp
+    };
+
+    function getTimestampOfInput(dateString) {
+        return new Date(dateString).getTime();
+    }
+
+    function getFormattedDay(timestamp) {
+        var datetime = new Date(timestamp);
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1;
+        var date = datetime.getDate();
+        return year + '-' + (String(month).length < 2 ? "0" + month : month) + "-"
+                + (String(date).length < 2 ? "0" + date : date);
+    }
+
+    Person.prototype = {
+        setName: function(name) {
+            this.name = name;
+        },
+        getName: function() {
+            return this.name;
+        },
+        /**
+         * 设置生日
+         * @param dateString
+         */
+        setBirthday: function(dateString) {
+            this.birthday = getTimestampOfInput(dateString);
+        },
+        /**
+         * 获取生日
+         * @returns {*}
+         */
+        getBirthday: function() {
+            // 不要把缓存变量放置于this中
+            this.birdayOfFormatted = getFormattedDay(this.birthday);
+            return this.birdayOfFormatted;
+        }
+    };
+</script>
+</body>
+</html>
