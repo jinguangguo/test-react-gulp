@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>封装1 - 闭包封装单例</title>
+</head>
+<body>
+<!--============================== 推荐指数：3 ==============================-->
+<script>
+    // 常用模式一：单例/静态 - 私有变量&共有方法
+    // 生成一个人
+    var person = (function() {
+        // 私有变量
+        var name = '';
+        var birthday = new Date().getTime();    // 默认是时间戳方式
+        // 共有方法
+        return {
+            setName: function(newName) {
+                name = newName;
+            },
+            getName: function() {
+                return name;
+            },
+            setBirthday: function(dateString) {
+                // 私有函数
+                function getTimestampOfInput() {
+                    return new Date(dateString).getTime();
+                }
+
+                birthday = getTimestampOfInput();
+            },
+            getBirthday: function() {
+                return getFormattedDay(birthday);
+
+                // 函数式 - 不访问外界变量，没有闭包的呈现
+                // 有了输入，便有了预想中的输出，不保存状态
+                // 私有函数 - 已工具方法存在
+                function getFormattedDay(timestamp) {
+                    var datetime = new Date(timestamp);
+                    var year = datetime.getFullYear();
+                    var month = datetime.getMonth() + 1;
+                    var date = datetime.getDate();
+                    return year + '-' + (String(month).length < 2 ? "0" + month : month) + "-"
+                            + (String(date).length < 2 ? "0" + date : date);
+                }
+            }
+        };
+    })();
+
+    person.setName('king');
+    console.log(person.getName());
+
+    person.setBirthday('2000-9-10');
+    console.log(person.getBirthday());
+</script>
+</body>
+</html>

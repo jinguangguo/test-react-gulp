@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>封装3 - 多实例</title>
+</head>
+<body>
+<!--============================== 推荐指数：5颗星 ==============================-->
+<script>
+    // 多实例 - 抽取工具函数
+    var Person = function(name, birthday) {
+        this.name = name;
+        this.birthday = birthday;   // timestamp
+    };
+
+    Person.prototype.setName = function(name) {
+        this.name = name;
+    };
+
+    Person.prototype.getName = function() {
+        return this.name;
+    };
+
+    // 工具函数
+    function getTimestampOfInput(dateString) {
+        return new Date(dateString).getTime();
+    }
+
+    Person.prototype.setBirthday = function(dateString) {
+        this.birthday = getTimestampOfInput(dateString);
+    };
+
+    // 工具函数
+    function getFormattedDay(timestamp) {
+        var datetime = new Date(timestamp);
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1;
+        var date = datetime.getDate();
+        return year + '-' + (String(month).length < 2 ? "0" + month : month) + "-"
+                + (String(date).length < 2 ? "0" + date : date);
+    }
+
+    Person.prototype.getBirthday = function() {
+        return getFormattedDay(this.birthday);
+    };
+
+    var person = new Person();
+
+    person.setName('king');
+    console.log(person.getName());
+
+    person.setBirthday('2000-9-10');
+    console.log(person.getBirthday());
+</script>
+</body>
+</html>

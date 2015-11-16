@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>封装3 - 多实例</title>
+</head>
+<body>
+<!--============================== 推荐指数：5 ------- refs jquery-- css.js、Data.js、val.js ==============================-->
+<script>
+    // 多实例 - 抽取工具函数
+    var Person = function(name, birthday) {
+        this.name = name;
+        this.birthday = birthday;   // timestamp
+    };
+
+    // 工具函数 - 对外静态变量
+    Person.getTimestampOfInput = function (dateString) {
+        return new Date(dateString).getTime();
+    };
+
+    // 工具函数 - 对外静态变量
+    Person.getFormattedDay = function(timestamp) {
+        var datetime = new Date(timestamp);
+        var year = datetime.getFullYear();
+        var month = datetime.getMonth() + 1;
+        var date = datetime.getDate();
+        return year + '-' + (String(month).length < 2 ? "0" + month : month) + "-"
+                + (String(date).length < 2 ? "0" + date : date);
+    };
+
+    Person.prototype = {
+        setName: function(name) {
+            this.name = name;
+        },
+        getName: function() {
+            return this.name;
+        },
+        /**
+         * 设置生日
+         * @param dateString
+         */
+        setBirthday: function(dateString) {
+            this.birthday = Person.getTimestampOfInput(dateString);
+        },
+        /**
+         * 获取生日
+         * @returns {*}
+         */
+        getBirthday: function() {
+            return Person.getFormattedDay(this.birthday);
+        }
+    };
+
+    var person = new Person();
+
+    person.setName('king');
+    console.log(person.getName());
+
+    person.setBirthday('2000-9-10');
+    console.log(person.getBirthday());
+
+    alert(Person.getTimestampOfInput('2015-11-16 19:00'));
+</script>
+</body>
+</html>

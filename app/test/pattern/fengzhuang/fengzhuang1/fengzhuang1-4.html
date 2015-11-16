@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>封装1.3 - 静态封装</title>
+</head>
+<body>
+<!--============================== 推荐指数：4 refs:underscore ----- createReduce, executeBound ==============================-->
+<!--
+1. 属性访问安全性
+2. 关注度分离
+-->
+<!--工具函数就近-->
+<script>
+    // 常用模式一：静态私有变量&共有方法
+    // 生成一个人
+    var person = (function() {
+
+        // 该对象保存静态属性
+        // 保存单例的状态
+        var _private = {
+            // 单例的私有属性 - 或者可理解为静态变量
+            _name: '',
+            // 单例的私有属性 - 或者可理解为静态变量
+            _birthday: new Date().getTime(),    // 默认是时间戳方式
+            getFormattedDayOfBirthday: function() {
+                return getFormattedDay(this._birthday);
+            }
+        };
+
+        var _private = {};
+        var _public = {};
+
+        _private.name = '';
+        _private.birthday = new Date().getTime();    // 默认是时间戳方式
+
+        // 工具函数
+        // 可供_private和_public对象共用
+        function getFormattedDay(timestamp) {
+            var datetime = new Date(timestamp);
+            var year = datetime.getFullYear();
+            var month = datetime.getMonth() + 1;
+            var date = datetime.getDate();
+            return year + '-' + (String(month).length < 2 ? "0" + month : month) + "-"
+                    + (String(date).length < 2 ? "0" + date : date);
+        }
+        _private.getFormattedDayOfBirthday = function() {
+            return getFormattedDay(this._birthday);
+        };
+
+        _public.setName = function(newName) {
+            _private._name = newName;
+        };
+
+        _public.getName = function() {
+            return _private._name;
+        };
+
+        // 工具函数
+        // 可供_private和_public对象共用
+        function getTimestampOfInput(dateString) {
+            return new Date(dateString).getTime();
+        }
+
+        _public.setBirthday = function(dateString) {
+            _private._birthday = getTimestampOfInput(dateString);
+        };
+
+        _public.getBirthday = function() {
+            return _private.getFormattedDayOfBirthday();
+        };
+
+        return _public;
+    })();
+
+    person.setName('king');
+    console.log(person.getName());
+
+    person.setBirthday('2000-9-10');
+    console.log(person.getBirthday());
+</script>
+</body>
+</html>

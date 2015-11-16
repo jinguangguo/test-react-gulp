@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>封装2 - 提取工具函数</title>
+</head>
+<body>
+<!--============================== 推荐指数：5 ==============================-->
+<script>
+    // 这里的工具类，可以以单独文件存在，供全局工程来使用
+    var util = {
+        /**
+         * 生日格式化显示
+         * @param timestamp
+         * @returns {string}
+         * @private
+         */
+        getFormattedDay: function(timestamp) {  // 模拟实现静态方法
+            var datetime = new Date(timestamp);
+            var year = datetime.getFullYear();
+            var month = datetime.getMonth() + 1;
+            var date = datetime.getDate();
+            return year + '-' + (String(month).length < 2 ? "0" + month : month) + "-"
+                    + (String(date).length < 2 ? "0" + date : date);
+        },
+        /**
+         * 根据用户输入来获取时间戳，如输入'1995-10-05'
+         * @param timestamp
+         * @returns {string}
+         * @private
+         */
+        getTimestampOfInput: function(dateString) {
+            return new Date(dateString).getTime();
+        }
+    };
+
+    var person = (function() {
+        // 私有变量
+        var name = '';
+        var birthday = new Date().getTime();    // 默认是时间戳方式
+        // 共有方法
+        return {
+            setName: function(newName) {
+                name = newName;
+            },
+            getName: function() {
+                return name;
+            },
+            setBirthday: function(dateString) {
+                birthday = util.getTimestampOfInput(dateString);
+            },
+            getBirthday: function() {
+                return util.getFormattedDay(birthday);
+            }
+        };
+    })();
+
+    person.setName('king');
+    console.log(person.getName());
+
+    person.setBirthday('2000-9-10');
+    console.log(person.getBirthday());
+</script>
+</body>
+</html>
