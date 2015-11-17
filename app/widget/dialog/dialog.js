@@ -333,6 +333,8 @@ $.extend(prototype, {
 
         var $content = this._$('content');
 
+        this.$content = $content;   // add by jinguangguo
+
         // HTMLElement
         if (typeof html === 'object') {
             html = $(html);

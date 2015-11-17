@@ -148,7 +148,7 @@ var _private = {
 
     init: function(option) {
         "use strict";
-        this.paper = Raphael(option.container, option.width, option.height);
+        window.paper = this.paper = Raphael(option.container, option.width, option.height);
         this._setCenterPosition(option.width, option.height);
         this.addImage(option.imgPath, option.imgWidth, option.imgHeight, option.width, option.height);
         this.initSet();
@@ -199,6 +199,23 @@ var _public = {
     clear: function() {
         "use strict";
         _private.paper.clear();
+    },
+
+    /**
+     * 预览
+     * @param previewContainer
+     */
+    toCanvas: function(previewContainer) {
+        "use strict";
+        canvg(previewContainer, _private.paper.canvas.outerHTML);
+    },
+
+    /**
+     * 另存为
+     */
+    saveAs: function() {
+        "use strict";
+
     }
 };
 
