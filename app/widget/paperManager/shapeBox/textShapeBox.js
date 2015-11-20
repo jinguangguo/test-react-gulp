@@ -36,9 +36,6 @@ var TextShapeBox = function(option) {
         'text-anchor': 'middle'
     });
 
-    // this._draggerTool
-    this.setDraggerTool();
-
     // this._$virtualDom
     // this._width
     // this._height
@@ -47,7 +44,7 @@ var TextShapeBox = function(option) {
     // this._$ui
     this._setUI();
 
-    this._init();
+    this._childInit();
 };
 
 TextShapeBox.DEFAULT_FONT_FAMILY = 'Arial';
@@ -63,9 +60,9 @@ TextShapeBox.prototype = new F();
 
 $.extend(TextShapeBox.prototype, {
 
-    _init: function(option) {
+    _childInit: function(option) {
         "use strict";
-        this._bind();
+        this.init();
     },
 
     /**
@@ -86,7 +83,7 @@ $.extend(TextShapeBox.prototype, {
                     '<input type="text" class="input" style="opacity: 0.8; width: 100%;">',
                 '</div>'
             ].join('');
-            _$ui = $(html).append(this._draggerTool.getUi());
+            _$ui = $(html);
             _$ui.find('input[type="text"]').on('blur', function() {
                 that._element.show();
                 console.log('blur ...');

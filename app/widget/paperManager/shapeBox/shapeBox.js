@@ -4,7 +4,7 @@
  * @date 2015/11/18
  */
 
-var DraggerTool = require('./draggerTool.js');
+var ScaleTool = require('./scaleTool.js');
 
 var ShapeBox = function() {
     "use strict";
@@ -12,7 +12,6 @@ var ShapeBox = function() {
     this._element = null;
     // must be override
     this._$ui = null;
-    this._draggerTool = null;
 };
 
 // 生成的对象数量
@@ -22,20 +21,13 @@ ShapeBox.prototype = {
 
     constructor: ShapeBox,
 
-    setDraggerTool: function() {
-        "use strict";
-        if (!this._element) {
-            throw new Error('The _element of shapeBox for draggerTool is must !');
-        }
-        this._draggerTool = new DraggerTool(this._element);
-    },
-
     init: function() {
         "use strict";
         ShapeBox.boxCount++;
         this._bindDrag();
         this._bindHover();
         this._bindClick();
+        this._scaleTool = new ScaleTool(this._element);
     },
 
     _bindPaper: function() {
@@ -70,15 +62,12 @@ ShapeBox.prototype = {
 
     selected: function() {
         "use strict";
-        this._draggerTool.show();
-        this._$ui.css({
-            zIndex: 3
-        });
+        this._scaleTool.build();
     },
 
     blur: function() {
         "use strict";
-        this._draggerTool.hide();
+
     },
 
     /**

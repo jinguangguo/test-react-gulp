@@ -32,8 +32,6 @@ var ImageShapeBox = function(option) {
 
     this._element = this._paper.image(this._path, this._x, this._y, this._width, this._height);
 
-    this.setDraggerTool(this._element);
-
     this._$ui = $('<div class="shape shape-image"></div>').css({
         position: 'absolute',
         left: this._x - 2,
@@ -42,7 +40,7 @@ var ImageShapeBox = function(option) {
         width: this._width,
         height: this._height,
         boxSizing: 'content-box'
-    }).append(this._draggerTool.getUi());
+    });
 
     this._childInit();
 };
