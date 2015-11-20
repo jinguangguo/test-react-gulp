@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计算精度问题</title>
+</head>
+<body>
+<script>
+    Math.formatFloat = function(f, digit) {
+        var m = Math.pow(10, digit);
+        return parseInt(f * m, 10) / m;
+    };
+
+    var numA = 0.1;
+    var numB = 0.2;
+    alert(Math.formatFloat(numA + numB, 1) === 0.3);
+</script>
+</body>
+</html>

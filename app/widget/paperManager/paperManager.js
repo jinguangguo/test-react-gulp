@@ -4,135 +4,18 @@
  * @date 2015/11/14
  */
 
+var TextShapeBox = require('./shapeBox/textShapeBox');
+
+var ImageShapeBox = require('./shapeBox/imageShapeBox');
+
 var _private = {
 
     // 画布对象
     paper: null,
 
-    centerX: 0,
+    $dom: null,
 
-    centerY: 0,
-
-    _addStroke: function(element) {
-        "use strict";
-        /**
-         strokestring
-         stroke colour
-         stroke-dasharraystring
-         [“”, “-”, “.”, “-.”, “-..”, “. ”, “- ”, “--”, “- .”, “--.”, “--..”]
-         stroke-linecapstring
-         [“butt”, “square”, “round”]
-         stroke-linejoinstring
-         [“bevel”, “round”, “miter”]
-         stroke-miterlimitnumber
-
-         stroke-opacitynumber
-
-         stroke-widthnumber
-         stroke width in pixels, default is '1'
-         */
-        element.attr({
-            stroke: '#ccc',
-            'stroke-dasharraystring': '- ',
-            'stroke-widthnumber': 1
-        });
-    },
-
-    _removeStroke: function(element) {
-        "use strict";
-        element.attr({
-            'stroke-widthnumber': 0
-        });
-    },
-
-    _bindHover: function(element) {
-        "use strict";
-        var that = this;
-        //element.hover(function() {
-        //    that._addStroke(this);
-        //}, function () {
-        //    that._removeStroke(this);
-        //});
-    },
-
-    _bindDrag: function(element) {
-        "use strict";
-        element
-            .drag(function(dx, dy, x, y, event) {
-                console.log('x:' + x + ', y:' + y);
-                console.log('dx:' + dx + ', dy:' + dy);
-
-                var startX = this.data('startX');
-                var startY = this.data('startY');
-
-                var newX = startX + dx;
-                var newY = startY + dy;
-                console.log('[move] newX:' + newX + ', newY:' + newY);
-                this.attr({
-                    x: newX,
-                    y: newY
-                });
-            }, function(x, y, event) {
-                console.log('start move ...');
-                // 开始移动，记录移动的开始坐标
-                this.data('startX', this.attrs.x);
-                this.data('startY', this.attrs.y);
-            }, function(x, y, event) {
-                console.log('end move ...');
-            });
-    },
-
-    bind: function(element) {
-        "use strict";
-        this._bindDrag(element);
-        this._bindHover(element);
-    },
-
-    addImage: function(imgPath, imgWidth, imgHeight, paperWidth, paperHeight) {
-        "use strict";
-        var imagePosition = getPositionOfImage();
-        var image = this.paper.image(imgPath, imagePosition.left, imagePosition.top, imgWidth, imgHeight);
-        _private.bind(image);
-        function getPositionOfImage() {
-            var leftCha = paperWidth - imgWidth;
-            var left;
-            if (leftCha > 0) {
-                left = leftCha / 2;
-            } else {
-                left = 0;
-            }
-            var topCha = paperHeight - imgHeight;
-            var top;
-            if (topCha > 0) {
-                top = topCha / 2;
-            } else {
-                top = 0;
-            }
-            return {
-                left: left,
-                top: top
-            }
-        }
-    },
-
-    /**
-     * 设置公共属性
-     */
-    initSet: function() {
-        "use strict";
-        //var that = this;
-        //this.paper.set().push(
-        //    this.paper.rect(30, 30, 25, 25, 5).attr({
-        //        fill: 'red'
-        //    }),
-        //    this.paper.rect(80, 30, 25, 25, 5).attr({
-        //        fill: 'red'
-        //    })
-        //);
-        //this.paper.forEach(function(element) {
-        //    that.bind(element);
-        //});
-    },
+    shapeArray: [],
 
     /**
      * 设置文本的出现位置的坐标
@@ -146,12 +29,18 @@ var _private = {
         this.centerY = height / 4;
     },
 
-    init: function(option) {
+    _bindPaper: function() {
         "use strict";
-        window.paper = this.paper = Raphael(option.container, option.width, option.height);
-        this._setCenterPosition(option.width, option.height);
-        this.addImage(option.imgPath, option.imgWidth, option.imgHeight, option.width, option.height);
-        this.initSet();
+        //$(this.paper.canvas).click(function(event) {
+        //    $.map(_private.shapeArray, function(shape, index) {
+        //        console.log('all blur ...');
+        //        if (shape._element.isPointInside(event.pageX, event.pageY) === true) {
+        //
+        //        } else {
+        //            shape.blur();
+        //        }
+        //    });
+        //});
     }
 };
 
@@ -161,30 +50,39 @@ var _public = {
      * @param option.container
      * @param option.width
      * @param option.height
-     * @param option.imgPath
-     * @param option.imgWidth
-     * @param option.imgHeight
      */
     createPaper: function(option) {
         "use strict";
-        _private.init(option);
+        window.paper = _private.paper = Raphael(option.container[0], option.width, option.height);
+        _private._bindPaper();
+        _private.$dom = option.container;
     },
+
+    loadImage: function(option) {
+        "use strict";
+        var imageShapeBox = new ImageShapeBox({
+            paper: _private.paper,
+            path: option.imgPath,
+            width: option.imgWidth,
+            height: option.imgHeight,
+            $parent: _private.$dom
+        });
+        _private.shapeArray.push(imageShapeBox);
+        _private.$dom.append(imageShapeBox.getUI());
+    },
+
     /**
      * @param option
      */
-    addText: (function() {
-        "use strict";
-        var DEFAULT_SIZE = 54;
-        return function(text, style) {
-            var text = _private.paper
-                .text(_private.centerX, _private.centerY, text)
-                .attr({
-                    'font-size': DEFAULT_SIZE,
-                    'font-family': style
-                });
-            _private.bind(text);
-        };
-    })(),
+    addText: function(text, style) {
+        var textShapeBox = new TextShapeBox({
+            paper: _private.paper,
+            text: text,
+            fontFamily: style
+        });
+        _private.shapeArray.push(textShapeBox);
+    },
+
     /**
      * 获取画布
      * @returns {paper}
@@ -193,6 +91,7 @@ var _public = {
         "use strict";
         return _private.paper;
     },
+
     /**
      * 清空画布，移除dom对象
      */
@@ -203,11 +102,11 @@ var _public = {
 
     /**
      * 预览
-     * @param previewContainer
+     * @param canvasDom
      */
-    toCanvas: function(previewContainer) {
+    toCanvas: function(canvasDom) {
         "use strict";
-        canvg(previewContainer, _private.paper.canvas.outerHTML);
+        canvg(canvasDom, _private.paper.canvas.outerHTML);
     },
 
     /**

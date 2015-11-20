@@ -16,6 +16,7 @@ var Pic = React.createClass({
 
     // 缓存变量
     cache: {
+        $module: null,
         nodeCanvas: $('<canvas id="canvas"></canvas>')[0]
     },
 
@@ -81,28 +82,46 @@ var Pic = React.createClass({
 
     componentDidMount: function() {
         "use strict";
-        var $paperNode = $(React.findDOMNode(this.refs.paper));
+        var $module = $(React.findDOMNode(this.refs.module));
+        this.cache.$module = $module;
+        var $paper = $module.find('.pic-paper');
+
         PaperManager.createPaper({
-            container: $paperNode[0],
-            width: $paperNode.width(),
-            height: $paperNode.height(),
+            container: $paper,
+            width: $paper.width(),
+            height: $paper.height()
+        });
+
+        PaperManager.loadImage({
             imgPath: '../static/img/image2.jpg',
             imgWidth: 510,
             imgHeight: 682
         });
     },
 
+    add: function() {
+        "use strict";
+        var divElement = document.createElement('div');
+        $('body').append(divElement);
+        var newPaper = Raphael(divElement);
+        newPaper.text(100, 50, 'text.....txt').attr({
+            'font-size': 50
+        });
+        window.newPaper = newPaper;
+    },
+
     render: function() {
         "use strict";
         return (
-            <div className="module-pic">
-                <div className="pic-paper" ref="paper"></div>
+            <div className="module-pic" ref="module">
+                <div className="pic-paper"></div>
                 <div className="module-buttons">
                     <button className="ui teal basic button">上传</button>
                     <button className="ui orange basic button" onClick={this.preview}>预览</button>
                     <button className="ui yellow basic button">保存至后台</button>
                     <button className="ui olive basic button" onClick={this.saveAs}>另存为图片</button>
                     <button className="ui green basic button" onClick={this.clear}>清空</button>
+                    <button className="ui teal basic button" onClick={this.add}>添加</button>
                     {/*
                      <button className="ui teal basic button">Teal</button>
                      <button className="ui blue basic button">Blue</button>

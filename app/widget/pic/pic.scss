@@ -5,14 +5,18 @@
  */
 
 .module-pic {
+    -webkit-user-select: none;
     position: relative;
     height: 100%;
     .pic-paper {
         height: 100%;
-        svg * {
-            cursor: move;
-            &:hover {
-                border: 1px solid red;
+        svg {
+            z-index: 2;
+            * {
+                cursor: move;
+                &:hover {
+                    border: 1px solid red;
+                }
             }
         }
     }
