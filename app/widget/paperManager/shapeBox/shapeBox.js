@@ -27,7 +27,7 @@ ShapeBox.prototype = {
         this._bindDrag();
         this._bindHover();
         this._bindClick();
-        this._scaleTool = new ScaleTool(this._element);
+        this._scaleTool = new ScaleTool(this._element, this);
     },
 
     _bindPaper: function() {
@@ -62,7 +62,7 @@ ShapeBox.prototype = {
 
     selected: function() {
         "use strict";
-        this._scaleTool.build();
+        this._scaleTool.create();
     },
 
     blur: function() {
@@ -93,9 +93,12 @@ ShapeBox.prototype = {
                     y: newY
                 });
                 that._$ui.css({
-                    left: newX - 1,
+                    left: newX - 2,
                     top: newY - 1
                 });
+
+                // 改变小矩形的位置
+                that._scaleTool.resetPosition();
             }, function(x, y, event) {
                 console.log('start move ...');
             }, function(x, y, event) {
@@ -120,9 +123,12 @@ ShapeBox.prototype = {
     show: function() {
         "use strict";
 
+    },
+
+    getUI: function() {
+        "use strict";
+
     }
-
-
 };
 
 module.exports = ShapeBox;
