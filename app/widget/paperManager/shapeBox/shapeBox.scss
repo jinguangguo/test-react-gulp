@@ -4,7 +4,7 @@
  * @date 2015/11/19
  */
 
-.shape {
+.paper-shape {
 
     box-sizing: content-box;
     display: block;
@@ -104,15 +104,13 @@
     }
 
     &-text {
-        .input {
+        input.input {
             display: inline-block;
             line-height: 1;
             vertical-align: middle;
             padding: 0;
             border: 1px solid #ddd;
-            &:focus {
-                border: 1px solid #ddd;
-            }
+            outline: 0;
         }
     }
 
@@ -120,4 +118,32 @@
 
     }
 
+}
+
+.paper-menu {
+
+    position: absolute;
+    background: #fff;
+    border: 1px solid red;
+
+    .menu-list {
+        // 清除浮动
+        overflow: hidden;
+        zoom: 1;
+        .item {
+            float: left;
+            margin-right: 5px;
+        }
+        .item-text {
+            display: none;
+        }
+    }
+
+    &-TEXT {
+        .menu-list {
+            .item {
+                display: block;
+            }
+        }
+    }
 }

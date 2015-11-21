@@ -20,6 +20,8 @@ var ShapeBox = require('./shapeBox.js');
 var ImageShapeBox = function(option) {
     "use strict";
 
+    this._option = option;
+
     this._paper = option.paper;
 
     this._path = option.path;
@@ -31,16 +33,6 @@ var ImageShapeBox = function(option) {
     this._y = option.y || position.top;
 
     this._element = this._paper.image(this._path, this._x, this._y, this._width, this._height);
-
-    this._$ui = $('<div class="shape shape-image"></div>').css({
-        position: 'absolute',
-        left: this._x - 2,
-        top: this._y - 1,
-        zIndex: 1,
-        width: this._width,
-        height: this._height,
-        boxSizing: 'content-box'
-    });
 
     this._childInit();
 };
@@ -68,20 +60,16 @@ function getPositionOfImage(imgWidth, imgHeight, paperWidth, paperHeight) {
     }
 }
 
-var F = function() {};
-F.prototype = ShapeBox.prototype;
-ImageShapeBox.prototype = new F();
+ImageShapeBox.TYPE = ShapeBox.Type_Image;
+ImageShapeBox.prototype = new ShapeBox(ImageShapeBox.TYPE);
 
 $.extend(ImageShapeBox.prototype, {
+
+    constructor: ImageShapeBox,
 
     _childInit: function(option) {
         "use strict";
         this.init();
-    },
-
-    getUI: function() {
-        "use strict";
-        return this._$ui;
     }
 
 });

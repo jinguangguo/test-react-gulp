@@ -6,13 +6,21 @@
 
 var ScaleTool = require('./scaleTool.js');
 
-var ShapeBox = function() {
+var MenuTool = require('./menuTool.js');
+
+var ShapeBox = function(type) {
     "use strict";
     // must be override
     this._element = null;
     // must be override
     this._$ui = null;
+    this._type = type;
+    this._scaleTool = null;
+    this._menuTool = null;
 };
+
+ShapeBox.Type_Text = 'TEXT';
+ShapeBox.Type_Image = 'IMAGE';
 
 // 生成的对象数量
 ShapeBox.boxCount = 0;
@@ -21,13 +29,38 @@ ShapeBox.prototype = {
 
     constructor: ShapeBox,
 
+    super: ShapeBox,
+
     init: function() {
         "use strict";
-        ShapeBox.boxCount++;
         this._bindDrag();
         this._bindHover();
         this._bindClick();
         this._scaleTool = new ScaleTool(this._element, this);
+        this._menuTool = new MenuTool(this._element, this);
+        ShapeBox.boxCount++;
+    },
+
+    /**
+     * @override
+     */
+    onSelected: function() {
+        "use strict";
+    },
+
+    /**
+     * @override
+     */
+    onDrag: function(newX, newY) {
+        "use strict";
+    },
+
+    /**
+     * @override
+     */
+    onUnselected: function() {
+        "use strict";
+
     },
 
     _bindPaper: function() {
@@ -38,12 +71,12 @@ ShapeBox.prototype = {
 
     _bindHover: function() {
         "use strict";
-        var that = this;
-        this._element.hover(function() {
-            that._$ui.addClass('shape--hover');
-        }, function() {
-            that._$ui.removeClass('shape--hover');
-        });
+        //var that = this;
+        //this._element.hover(function() {
+        //    that._$ui.addClass('shape--hover');
+        //}, function() {
+        //    that._$ui.removeClass('shape--hover');
+        //});
     },
 
     /**
@@ -62,10 +95,12 @@ ShapeBox.prototype = {
 
     selected: function() {
         "use strict";
-        this._scaleTool.create();
+        this.onSelected();
+        this._scaleTool.rebuild();
+        this._menuTool.rebuild();
     },
 
-    blur: function() {
+    unselected: function() {
         "use strict";
 
     },
@@ -81,10 +116,8 @@ ShapeBox.prototype = {
             .drag(function(dx, dy, x, y, event) {
                 console.log('x:' + x + ', y:' + y);
                 console.log('dx:' + dx + ', dy:' + dy);
-
                 var startX = that._x;
                 var startY = that._y;
-
                 var newX = startX + dx;
                 var newY = startY + dy;
                 console.log('[move] newX:' + newX + ', newY:' + newY);
@@ -92,12 +125,8 @@ ShapeBox.prototype = {
                     x: newX,
                     y: newY
                 });
-                that._$ui.css({
-                    left: newX - 2,
-                    top: newY - 1
-                });
-
-                // 改变小矩形的位置
+                that.onDrag(newX, newY);
+                // 改变_scaleTool的位置
                 that._scaleTool.resetPosition();
             }, function(x, y, event) {
                 console.log('start move ...');
@@ -125,10 +154,37 @@ ShapeBox.prototype = {
 
     },
 
-    getUI: function() {
+    setType: function(type) {
+        "use strict";
+        this._type = type;
+    },
+
+    getType: function() {
+        "use strict";
+        return this._type;
+    },
+
+    destroy: function() {
+
         "use strict";
 
+        this._element.remove();
+        this._element = null;
+
+        if (this._$ui) {
+            this._$ui.remove();
+            this._$ui = null;
+        }
+
+        this._type = '';
+
+        this._scaleTool.destroy();
+        this._scaleTool = null;
+
+        this._menuTool.destroy();
+        this._menuTool = null;
     }
+
 };
 
 module.exports = ShapeBox;

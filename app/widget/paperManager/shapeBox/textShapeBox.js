@@ -20,6 +20,8 @@ var ShapeBox = require('./shapeBox.js');
 var TextShapeBox = function(option) {
     "use strict";
 
+    this._option = option;
+
     this._paper = option.paper;
 
     this._text = option.text;
@@ -41,8 +43,7 @@ var TextShapeBox = function(option) {
     // this._height
     this._setVirtualDom();
 
-    // this._$ui
-    this._setUI();
+    this._$ui = null;
 
     this._childInit();
 };
@@ -54,11 +55,12 @@ TextShapeBox.DEFAULT_FONT_COLOR = '#000';
 TextShapeBox.Type_Dom = 1;
 TextShapeBox.Type_Svg = 2;
 
-var F = function() {};
-F.prototype = ShapeBox.prototype;
-TextShapeBox.prototype = new F();
+TextShapeBox.TYPE = ShapeBox.Type_Text;
+TextShapeBox.prototype = new ShapeBox(ShapeBox.Type_Text);
 
 $.extend(TextShapeBox.prototype, {
+
+    constructor: TextShapeBox,
 
     _childInit: function(option) {
         "use strict";
@@ -79,16 +81,16 @@ $.extend(TextShapeBox.prototype, {
             _$ui = this._$ui;
         } else {
             var html = [
-                '<div class="shape shape-text">',
+                '<div class="paper-shape paper-shape-text">',
                     '<input type="text" class="input" style="opacity: 0.8; width: 100%;">',
                 '</div>'
             ].join('');
             _$ui = $(html);
             _$ui.find('input[type="text"]').on('blur', function() {
                 that._element.show();
-                console.log('blur ...');
                 that._text = $(this).val();
                 that._rebuild();
+                that._hideUi();
             });
             $(this._paper.canvas.parentNode).append(_$ui);
         }
@@ -102,11 +104,11 @@ $.extend(TextShapeBox.prototype, {
             fontColor: this._fontColor,
             width: this._width,
             height: this._height,
-            display: 'block',
+            display: 'none',
             zIndex: 1
         });
 
-        this._$ui.find('input[type="text"]').hide().val(this._text);
+        this._$ui.val(this._text);
     },
 
     /**
@@ -118,18 +120,18 @@ $.extend(TextShapeBox.prototype, {
         "use strict";
         return $('<div class="virtual-dom">' +
                     '<span class="dom-text" style="display: inline-block;">' + this._text + '</span>' +
-                    '<input class="dom-input" type="text" style="border: 1px solid #ccc;" value="' + this._text + '">' +
+                    '<input class="dom-input" type="text" value="' + this._text + '">' +
                 '</div>').css({
             position: 'absolute',
-            top: 0,
-            left: 0,
+            bottom: 0,
+            right: 0,
             zIndex: -999999,
             fontFamily: this._fontFamily,
             fontSize: this._fontSize,
             fontColor: this._fontColor,
-            //visibility: 'hidden',
+            visibility: 'hidden',
             lineHeight: 1
-        }).appendTo($('body'));
+        }).appendTo(this._paper.canvas.parentNode);
     },
 
     /**
@@ -158,21 +160,24 @@ $.extend(TextShapeBox.prototype, {
         "use strict";
         this._setVirtualDom();
         this._setUI();
+        this._scaleTool.rebuild();
+    },
+
+    _hideUi: function() {
+        "use strict";
+        this._$ui.css({
+            zIndex: 1
+        }).hide();
     },
 
     _showUi: function() {
         "use strict";
         this._$ui.css({
-            zIndex: 3
-        }).show();
-        this._$ui.find('input[type="text"]')
-            .css({
-                padding: 0,
-                lineHeight: 1,
-                border: '1px solid #ddd'
+                zIndex: 3
             })
-            .val(this._text)
             .show()
+            .find('input[type="text"]')
+            .val(this._text)
             .select()
             .focus();
     },
@@ -202,51 +207,23 @@ $.extend(TextShapeBox.prototype, {
         }
     },
 
-    _bindClick: function() {
+    onSelected: function() {
         "use strict";
-        var that = this;
-        this._element.dblclick(function(event) {
-            console.log('the element dbclick...');
-            that._element.hide();
-            that._showUi();
-        });
+        this._element.hide();
+        this._rebuild();
+        this._showUi();
     },
 
-    _bindDrag: function() {
+    /**
+     * 当矩形框在移动时
+     */
+    onRectMove: function(dx, dy) {
         "use strict";
-        var that = this;
+        // TODO 改变字体大小
+    },
 
-        this._element
-            .drag(function(dx, dy, x, y, event) {
-                event.stopPropagation();
-
-                console.log('x:' + x + ', y:' + y);
-                console.log('dx:' + dx + ', dy:' + dy);
-
-                var startX = that._x;
-                var startY = that._y;
-
-                var newX = startX + dx;
-                var newY = startY + dy;
-
-                console.log('[move] newX:' + newX + ', newY:' + newY);
-
-                this.attr({
-                    x: newX,
-                    y: newY
-                });
-
-                that._$ui.css({
-                    left: newX - that._width / 2 - 1,
-                    top: newY - that._height / 2 - 1
-                });
-            }, function(x, y, event) {
-                console.log('start move ...');
-            }, function(x, y, event) {
-                console.log('end move ...');
-                that._x = this.attrs.x;
-                that._y = this.attrs.y;
-            });
+    onDrag: function(newX, newY) {
+        "use strict";
     }
 
 });

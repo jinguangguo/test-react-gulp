@@ -68,7 +68,6 @@ var _public = {
             $parent: _private.$dom
         });
         _private.shapeArray.push(imageShapeBox);
-        _private.$dom.append(imageShapeBox.getUI());
     },
 
     /**
