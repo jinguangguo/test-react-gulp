@@ -19,7 +19,7 @@ var MenuTool = function(element, shapeBox) {
 };
 
 MenuTool.SHOW_SHIFT_X = 5;
-MenuTool.SHOW_SHIFT_Y = 20;
+MenuTool.SHOW_SHIFT_Y = 50;
 
 MenuTool.COPY_SHIFT_X = 30;
 MenuTool.COPY_SHIFT_Y = 30;

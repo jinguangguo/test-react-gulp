@@ -33,6 +33,9 @@ ShapeBox.prototype = {
 
     init: function() {
         "use strict";
+        this._element.attr({
+            title: '双击可编辑'
+        });
         this._bindDrag();
         this._bindHover();
         this._bindClick();
