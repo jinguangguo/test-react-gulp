@@ -221,7 +221,6 @@ $.extend(MenuTool.prototype, {
                     var fontSize = this.$content.find('.j-size').val();
                     var fontColor = this.$content.find('.j-color').val();
                     var fontBold = this.$content.find('.j-bold').val();
-                    debugger;
                     that._element.attr({
                         'font-family': fontFamily,
                         'font-size': fontSize,

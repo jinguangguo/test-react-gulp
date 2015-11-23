@@ -207,6 +207,11 @@ $.extend(TextShapeBox.prototype, {
         }
     },
 
+    focus: function() {
+        "use strict";
+        this.selected();
+    },
+
     onSelected: function() {
         "use strict";
         this._element.hide();

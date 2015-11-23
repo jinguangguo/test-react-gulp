@@ -80,6 +80,7 @@ var _public = {
             fontFamily: style
         });
         _private.shapeArray.push(textShapeBox);
+        return textShapeBox;
     },
 
     /**

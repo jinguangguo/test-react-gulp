@@ -43,9 +43,10 @@ var Pic = React.createClass({
             onshow: function() {
                 PaperManager.toCanvas(that.cache.nodeCanvas);
             },
-            okValue: '导出',
+            okValue: '另存为',
             ok: function() {
-
+                this.remove();
+                that.saveAs();
             },
             cancelValue: '取消',
             cancel: function() {
@@ -99,15 +100,27 @@ var Pic = React.createClass({
         });
     },
 
+    upload: function() {
+        "use strict";
+        artDialog({
+            title: '提示',
+            content: '待调试...',
+            okValue: '确定'
+        }).show();
+    },
+
+    saveToServer: function() {
+        "use strict";
+        artDialog({
+            title: '提示',
+            content: '待调试...',
+            okValue: '确定'
+        }).show();
+    },
+
     add: function() {
         "use strict";
-        var divElement = document.createElement('div');
-        $('body').append(divElement);
-        var newPaper = Raphael(divElement);
-        newPaper.text(100, 50, 'text.....txt').attr({
-            'font-size': 50
-        });
-        window.newPaper = newPaper;
+        PaperManager.addText('请输入文本').focus();
     },
 
     render: function() {
@@ -116,12 +129,12 @@ var Pic = React.createClass({
             <div className="module-pic" ref="module">
                 <div className="pic-paper"></div>
                 <div className="module-buttons">
-                    <button className="ui teal basic button">上传</button>
+                    <button className="ui teal basic button" onClick={this.upload}>上传</button>
                     <button className="ui orange basic button" onClick={this.preview}>预览</button>
-                    <button className="ui yellow basic button">保存至后台</button>
+                    <button className="ui yellow basic button" onClick={this.saveToServer}>保存至后台</button>
                     <button className="ui olive basic button" onClick={this.saveAs}>另存为图片</button>
                     <button className="ui green basic button" onClick={this.clear}>清空</button>
-                    <button className="ui teal basic button" onClick={this.add}>添加</button>
+                    <button className="ui teal basic button" onClick={this.add}>添加文本</button>
                     {/*
                      <button className="ui teal basic button">Teal</button>
                      <button className="ui blue basic button">Blue</button>

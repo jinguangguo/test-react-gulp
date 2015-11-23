@@ -96,14 +96,20 @@ gulp.task('server:start', function() {
                     reply(html).type('text/html');
                     break;
                 case 'js':
-                    browserify(fileInfo.directoryPath + '.jsx', {
-                        transform: ['reactify'],
-                        extensions: ['.jsx']
-                    }).bundle(function(error, stream) {
-                        if (error) {
-                            console.log(error);
+                    fs.exists(fileInfo.filePath, function(exists) {
+                        if (exists) {
+                            reply.file(fileInfo.filePath);
+                        } else {
+                            browserify(fileInfo.directoryPath + '.jsx', {
+                                transform: ['reactify'],
+                                extensions: ['.jsx']
+                            }).bundle(function(error, stream) {
+                                if (error) {
+                                    console.log(error);
+                                }
+                                reply(stream).type('text/javascript');
+                            });
                         }
-                        reply(stream).type('text/javascript');
                     });
                     break;
                 default:
