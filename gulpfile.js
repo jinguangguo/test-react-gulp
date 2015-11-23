@@ -17,3 +17,5 @@ var nodeSass = require('node-sass');
 var server = new Hapi.Server();
 
 require('./gulp/server');
+
+require('./gulp/deploy');
