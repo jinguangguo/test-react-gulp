@@ -31,7 +31,7 @@ require('./deploy/html');
 
 require('./deploy/react');
 
-require('./deploy/less');
+require('./deploy/scss');
 
 require('./deploy/static');
 
