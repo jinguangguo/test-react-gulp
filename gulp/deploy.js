@@ -14,15 +14,17 @@ global.APP_PATH = {
     PAGE: './app/page',
     STATIC: './app/static',
     TEST: './app/test',
-    WIDGET: './app/widget'
+    WIDGET: './app/widget',
+    BOWER: './bower_components'
 };
 
 global.OUTPUT_PATH = {
     BASE: './output',
-    PAGE: './output/page',
-    STATIC: './output/static',
-    TEST: './output/test',
-    WIDGET: './output/widget'
+    PAGE: './output/app/page',
+    STATIC: './output/app/static',
+    TEST: './output/app/test',
+    WIDGET: './output/app/widget',
+    BOWER: './output/bower_components'
 };
 
 require('./deploy/clean');
@@ -35,9 +37,11 @@ require('./deploy/scss');
 
 require('./deploy/static');
 
+require('./deploy/bower');
+
 // 1. run 'clean'
 // 2. run 'html', 'react', 'scss', 'static' in parallel;
-gulp.task('deploy', sequence('clean', ['html', 'react', 'scss', 'static']));
+gulp.task('deploy', sequence('clean', ['html', 'react', 'scss', 'static', 'bower']));
 
 
 
