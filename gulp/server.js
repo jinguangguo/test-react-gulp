@@ -14,7 +14,9 @@ var swig = require('swig');
 
 var browserify = require('browserify');
 
-var nodeSass = require('node-sass');
+var lessify = require('node-lessify');
+
+var less = require('less');
 
 var server = new Hapi.Server();
 
@@ -42,7 +44,7 @@ gulp.task('server:start', function() {
         _replaceScss: function(html) {
             //var reg = /(\S+)\.scss([\?\S+]?)/g;
             //html.replace(reg, '$1.css$2');
-            html = html.replace(/\.scss/g, '.css');
+            html = html.replace(/\.less/g, '.css');
             return html;
         },
         _replaceJsx: function(html) {
@@ -81,11 +83,21 @@ gulp.task('server:start', function() {
                         if (exists) {
                             reply.file(fileInfo.filePath);
                         } else {
-                            reply(
-                                nodeSass.renderSync({
-                                    file: fileInfo.directoryPath + '.scss'
-                                }).css
-                            ).type('text/css');
+                            //browserify(fileInfo.directoryPath + '.less', {
+                            //    transform: ['node-lessify'],
+                            //    extensions: ['.less']
+                            //}).bundle(function(error, stream) {
+                            //    if (error) {
+                            //        console.log(error);
+                            //    }
+                            //    reply(stream).type('text/css');
+                            //});
+
+                            //reply(
+                            //    less.render({
+                            //        file: fileInfo.directoryPath + '.less'
+                            //    }).css
+                            //).type('text/css');
                         }
                     });
                     break;
