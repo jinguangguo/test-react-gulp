@@ -5,7 +5,7 @@
  */
 
 .clearfix {
-    .clearfix();
+    @include clearfix();
 }
 
 .ellipsis {
