@@ -27,25 +27,7 @@ ShapeBox.Type_Image = 'IMAGE';
 // 生成的对象数量
 ShapeBox.boxCount = 0;
 
-ShapeBox.prototype = {
-
-    constructor: ShapeBox,
-
-    super: ShapeBox,
-
-    init: function() {
-        "use strict";
-        this._element.attr({
-            title: '双击可编辑'
-        });
-        this._bindDrag();
-        this._bindHover();
-        this._bindClick();
-        this._scaleTool = new ScaleTool(this._element, this);
-        this._menuTool = new MenuTool(this._element, this);
-        ShapeBox.boxCount++;
-    },
-
+$.extend(ShapeBox.prototype, {
     /**
      * @override
      */
@@ -68,109 +50,87 @@ ShapeBox.prototype = {
 
     },
 
-    _bindPaper: function() {
-        "use strict";
-        // 失去选中状态
-
-    },
-
-    _bindHover: function() {
-        "use strict";
-        //var that = this;
-        //this._element.hover(function() {
-        //    that._$ui.addClass('shape--hover');
-        //}, function() {
-        //    that._$ui.removeClass('shape--hover');
-        //});
-    },
-
     /**
-     * TODO 选中
+     * @override
      */
-    _bindClick: function() {
+    onShow: function() {
         "use strict";
-        // TODO 出现toolbar和draggerTool
+
+    }
+});
+
+$.extend(ShapeBox.prototype, {
+
+    constructor: ShapeBox,
+
+    super: ShapeBox,
+
+    init: function() {
+        "use strict";
+        this._element.attr({
+            title: '双击可编辑'
+        });
+        this._bind();
+        this._scaleTool = new ScaleTool(this._element, this);
+        this._menuTool = new MenuTool(this._element, this);
+        ShapeBox.boxCount++;
+    },
+
+    _bind: function() {
+        "use strict";
+
         var that = this;
+
+        // 选中
         this._element.dblclick(function(event) {
             event.stopPropagation();
             that.selected();
         });
+
+        // 拖拽
+        this._element.drag(function(dx, dy, x, y, event) {
+            var startX = that._x;
+            var startY = that._y;
+            var newX = startX + dx;
+            var newY = startY + dy;
+            if (CONFIG.DEBUG === true) {
+                console.log('x:' + x + ', y:' + y);
+                console.log('dx:' + dx + ', dy:' + dy);
+                console.log('[move] newX:' + newX + ', newY:' + newY);
+            }
+            this.attr({
+                x: newX,
+                y: newY
+            });
+            that.onDrag(newX, newY);
+            // 改变_scaleTool的位置
+            that._scaleTool.resetPosition();
+        }, function(x, y, event) {
+            if (CONFIG.DEBUG === true) {
+                console.log('start move ...');
+            }
+            that._menuTool.destroy();
+        }, function(x, y, event) {
+            if (CONFIG.DEBUG === true) {
+                console.log('end move ...');
+            }
+            that._x = this.attrs.x;
+            that._y = this.attrs.y;
+            that._menuTool.rebuild();
+        });
     },
 
+    /**
+     * 选中状态
+     */
     selected: function() {
         "use strict";
         this.onSelected();
-        this._showSelectBar();
-        this._showToolbar();
-    },
-
-    unselected: function() {
-        "use strict";
-
-    },
-
-    /**
-     * 拖拽
-     * @private
-     */
-    _bindDrag: function() {
-        "use strict";
-        var that = this;
-        this._element
-            .drag(function(dx, dy, x, y, event) {
-                var startX = that._x;
-                var startY = that._y;
-                var newX = startX + dx;
-                var newY = startY + dy;
-                if (CONFIG.DEBUG === true) {
-                    console.log('x:' + x + ', y:' + y);
-                    console.log('dx:' + dx + ', dy:' + dy);
-                    console.log('[move] newX:' + newX + ', newY:' + newY);
-                }
-                this.attr({
-                    x: newX,
-                    y: newY
-                });
-                that.onDrag(newX, newY);
-                // 改变_scaleTool的位置
-                that._scaleTool.resetPosition();
-            }, function(x, y, event) {
-                if (CONFIG.DEBUG === true) {
-                    console.log('start move ...');
-                }
-                that._menuTool.destroy();
-            }, function(x, y, event) {
-                if (CONFIG.DEBUG === true) {
-                    console.log('end move ...');
-                }
-                that._x = this.attrs.x;
-                that._y = this.attrs.y;
-                that._showToolbar()
-            });
-    },
-
-    /**
-     * 呈现操作栏
-     * @private
-     */
-    _showToolbar: function() {
-        "use strict";
+        this._scaleTool.rebuild();
         this._menuTool.rebuild();
     },
 
-    /**
-     * 呈现选中栏
-     * @private
-     */
-    _showSelectBar: function() {
-        "use strict";
-        this._scaleTool.rebuild();
-    },
-
-    /**
-     * @override
-     */
-    show: function() {
+    unselected: function() {
         "use strict";
 
     },
@@ -206,7 +166,7 @@ ShapeBox.prototype = {
         this._menuTool = null;
     }
 
-};
+});
 
 module.exports = ShapeBox;
 

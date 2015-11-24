@@ -2103,8 +2103,8 @@ var MenuTool = function(element, shapeBox) {
     this._init();
 };
 
-MenuTool.SHOW_SHIFT_X = 0;
-MenuTool.SHOW_SHIFT_Y = 0;
+MenuTool.SHOW_SHIFT_X = 5;
+MenuTool.SHOW_SHIFT_Y = 10;
 
 MenuTool.MUNU_HEIGHT = 20;
 
@@ -2134,6 +2134,10 @@ $.extend(MenuTool.prototype, {
                 '<ul class="menu-list">',
 
                     // 以下是文本功能
+                    '<li class="item item-text">',
+                        '<a href="javascript:;" id="edit">编辑</a>',
+                    '</li>',
+
                     '<li class="item item-text">',
                         '<a href="javascript:;" id="fontFamily">字体</a>',
                     '</li>',
@@ -2180,6 +2184,32 @@ $.extend(MenuTool.prototype, {
         "use strict";
 
         var that = this;
+
+        this._$ui.find('#edit').click(function() {
+            var getHtml = function() {
+                var attrs = that._element.attrs;
+                return (
+                    '<div class="module-edit">' +
+                        '<label class="edit-label">' +
+                            '请输入文本内容：' +
+                            '<input type="text" class="j-edit" value="' + attrs.text + '">' +
+                        '</label>' +
+                    '</div>'
+                );
+            };
+            artDialog({
+                title: '编辑',
+                content: getHtml(),
+                okValue: '确定',
+                ok: function() {
+                    var value = this.$content.find('.j-edit').val();
+                    that._element.attr({
+                        text: value
+                    });
+                    that._shapeBox.selected();
+                }
+            }).showModal();
+        });
 
         // 删除 - ok
         this._$ui.find('#remove').click(function() {
@@ -2366,6 +2396,9 @@ $.extend(MenuTool.prototype, {
     _setMenuPositionOfText: function() {
         "use strict";
         var attrs = this._element.attrs;
+        if (CONFIG.DEBUG === true) {
+            console.log('attrs.width:' + attrs.width);
+        }
         this._x = attrs.x - attrs.width / 2 - MenuTool.SHOW_SHIFT_X;
         this._y = attrs.y - attrs.height / 2 - MenuTool.SHOW_SHIFT_Y- MenuTool.MUNU_HEIGHT;
     },
@@ -2665,23 +2698,37 @@ $.extend(ScaleTool.prototype, {
 
             var rectInstance = this;
 
+            function doLog() {
+                if (CONFIG.DEBUG) {
+                    console.log('dx:' + dx + ', dy:' + dy);
+                }
+            }
+
+            doLog();
+
             // OK
             function setElementSize() {
                 var resultD;
-                if (Math.abs(dx) >= Math.abs(dy)) {
-                    resultD = dx;
-                } else {
-                    resultD = dy;
-                }
+                //if (Math.abs(dx) >= Math.abs(dy)) {
+                //    resultD = dx;
+                //} else {
+                //    resultD = dy;
+                //}
+
+                resultD = dx;
+
+                // 以横坐标为基准进行自体的放大与缩小
                 that._element.attr({
-                    'font-size': rectInstance.data('initFontSize') + resultD,
-                    'width': rectInstance.data('initElementWidth') + resultD * 2,
-                    'height': rectInstance.data('initElementHeight') + resultD * 2
+                    'font-size': rectInstance.data('initFontSize') + resultD
                 });
+                if (CONFIG.DEBUG === true) {
+                    console.log('that._element.attrs:' + JSON.stringify(that._element.attrs));
+                }
             }
 
             setElementSize();
 
+            // 拖动过程中，对选中框和小矩阵的位置进行调整
             that.resetPosition();
 
             if (that._shapeBox.onRectMove) {
@@ -2692,14 +2739,20 @@ $.extend(ScaleTool.prototype, {
             if (CONFIG.DEBUG === true) {
                 console.log('start move ...');
             }
+            // 隐藏小矩阵和选中矿
+            that.hide();
+            // 销毁菜单栏
+            that._shapeBox._menuTool.destroy();
             var attrs = that._element.attrs;
             this.data('initFontSize', attrs['font-size']);
-            this.data('initElementWidth', attrs.width);
-            this.data('initElementHeight', attrs.height);
         }, function(x, y, event) {
             if (CONFIG.DEBUG === true) {
                 console.log('end move ...');
             }
+            // 执行下面两个方法
+            // 1.重新设置文本框的大小
+            // 2.重新设置小矩阵和选中框
+            that._shapeBox.selected();
         });
     },
 
@@ -2735,6 +2788,16 @@ $.extend(ScaleTool.prototype, {
                 this._bindDrag();
         }
 
+    },
+
+    hide: function() {
+        "use strict";
+        this._rt.attr({
+            opacity: 0
+        });
+        this._srt.attr({
+            opacity: 0
+        });
     },
 
     destroy: function() {
@@ -2783,25 +2846,7 @@ ShapeBox.Type_Image = 'IMAGE';
 // 生成的对象数量
 ShapeBox.boxCount = 0;
 
-ShapeBox.prototype = {
-
-    constructor: ShapeBox,
-
-    super: ShapeBox,
-
-    init: function() {
-        "use strict";
-        this._element.attr({
-            title: '双击可编辑'
-        });
-        this._bindDrag();
-        this._bindHover();
-        this._bindClick();
-        this._scaleTool = new ScaleTool(this._element, this);
-        this._menuTool = new MenuTool(this._element, this);
-        ShapeBox.boxCount++;
-    },
-
+$.extend(ShapeBox.prototype, {
     /**
      * @override
      */
@@ -2824,109 +2869,87 @@ ShapeBox.prototype = {
 
     },
 
-    _bindPaper: function() {
-        "use strict";
-        // 失去选中状态
-
-    },
-
-    _bindHover: function() {
-        "use strict";
-        //var that = this;
-        //this._element.hover(function() {
-        //    that._$ui.addClass('shape--hover');
-        //}, function() {
-        //    that._$ui.removeClass('shape--hover');
-        //});
-    },
-
     /**
-     * TODO 选中
+     * @override
      */
-    _bindClick: function() {
+    onShow: function() {
         "use strict";
-        // TODO 出现toolbar和draggerTool
+
+    }
+});
+
+$.extend(ShapeBox.prototype, {
+
+    constructor: ShapeBox,
+
+    super: ShapeBox,
+
+    init: function() {
+        "use strict";
+        this._element.attr({
+            title: '双击可编辑'
+        });
+        this._bind();
+        this._scaleTool = new ScaleTool(this._element, this);
+        this._menuTool = new MenuTool(this._element, this);
+        ShapeBox.boxCount++;
+    },
+
+    _bind: function() {
+        "use strict";
+
         var that = this;
+
+        // 选中
         this._element.dblclick(function(event) {
             event.stopPropagation();
             that.selected();
         });
+
+        // 拖拽
+        this._element.drag(function(dx, dy, x, y, event) {
+            var startX = that._x;
+            var startY = that._y;
+            var newX = startX + dx;
+            var newY = startY + dy;
+            if (CONFIG.DEBUG === true) {
+                console.log('x:' + x + ', y:' + y);
+                console.log('dx:' + dx + ', dy:' + dy);
+                console.log('[move] newX:' + newX + ', newY:' + newY);
+            }
+            this.attr({
+                x: newX,
+                y: newY
+            });
+            that.onDrag(newX, newY);
+            // 改变_scaleTool的位置
+            that._scaleTool.resetPosition();
+        }, function(x, y, event) {
+            if (CONFIG.DEBUG === true) {
+                console.log('start move ...');
+            }
+            that._menuTool.destroy();
+        }, function(x, y, event) {
+            if (CONFIG.DEBUG === true) {
+                console.log('end move ...');
+            }
+            that._x = this.attrs.x;
+            that._y = this.attrs.y;
+            that._menuTool.rebuild();
+        });
     },
 
+    /**
+     * 选中状态
+     */
     selected: function() {
         "use strict";
         this.onSelected();
-        this._showSelectBar();
-        this._showToolbar();
-    },
-
-    unselected: function() {
-        "use strict";
-
-    },
-
-    /**
-     * 拖拽
-     * @private
-     */
-    _bindDrag: function() {
-        "use strict";
-        var that = this;
-        this._element
-            .drag(function(dx, dy, x, y, event) {
-                var startX = that._x;
-                var startY = that._y;
-                var newX = startX + dx;
-                var newY = startY + dy;
-                if (CONFIG.DEBUG === true) {
-                    console.log('x:' + x + ', y:' + y);
-                    console.log('dx:' + dx + ', dy:' + dy);
-                    console.log('[move] newX:' + newX + ', newY:' + newY);
-                }
-                this.attr({
-                    x: newX,
-                    y: newY
-                });
-                that.onDrag(newX, newY);
-                // 改变_scaleTool的位置
-                that._scaleTool.resetPosition();
-            }, function(x, y, event) {
-                if (CONFIG.DEBUG === true) {
-                    console.log('start move ...');
-                }
-                that._menuTool.destroy();
-            }, function(x, y, event) {
-                if (CONFIG.DEBUG === true) {
-                    console.log('end move ...');
-                }
-                that._x = this.attrs.x;
-                that._y = this.attrs.y;
-                that._showToolbar()
-            });
-    },
-
-    /**
-     * 呈现操作栏
-     * @private
-     */
-    _showToolbar: function() {
-        "use strict";
+        this._scaleTool.rebuild();
         this._menuTool.rebuild();
     },
 
-    /**
-     * 呈现选中栏
-     * @private
-     */
-    _showSelectBar: function() {
-        "use strict";
-        this._scaleTool.rebuild();
-    },
-
-    /**
-     * @override
-     */
-    show: function() {
+    unselected: function() {
         "use strict";
 
     },
@@ -2962,7 +2985,7 @@ ShapeBox.prototype = {
         this._menuTool = null;
     }
 
-};
+});
 
 module.exports = ShapeBox;
 
@@ -2976,6 +2999,8 @@ module.exports = ShapeBox;
  */
 
 var ShapeBox = require('./shapeBox.js');
+
+var CONFIG = require('./config.js');
 
 /**
  *
@@ -3003,6 +3028,7 @@ var TextShapeBox = function(option) {
     this._y = option.y || this._paper.height / 4;
 
     this._element = this._paper.text(this._x, this._y, this._text).attr({
+        'text': this._text,
         'font-size': this._fontSize,
         'font-family': this._fontFamily,
         'fill': this._fontColor,
@@ -3039,66 +3065,20 @@ $.extend(TextShapeBox.prototype, {
     },
 
     /**
-     * 设置字体文本DOM框
-     * @private
-     */
-    _setUI: function() {
-        "use strict";
-
-        var that = this;
-        var _$ui = null;
-
-        if (this._$ui) {
-            _$ui = this._$ui;
-        } else {
-            _$ui = $([
-                '<div class="paper-shape paper-shape-text">',
-                    '<input class="input" style="opacity: 0.8; width: 100%;">',
-                '</div>'
-            ].join(''));
-            _$ui.find('.input').on('blur', function() {
-                that._element.show();
-                that._text = $(this).val();
-                that._rebuild();
-                that._hideUi();
-            });
-            $(this._paper.canvas.parentNode).append(_$ui);
-        }
-
-        this._$ui = _$ui.css({
-            position: 'absolute',
-            top: this._y - this._height / 2 - 1,
-            left: this._x - this._width /2 - 1,
-            fontFamily: this._fontFamily,
-            fontSize: this._fontSize,
-            fontColor: this._fontColor,
-            width: this._width,
-            height: this._height,
-            display: 'none',
-            zIndex: 1
-        });
-
-        this._$ui.val(this._text);
-    },
-
-    /**
      * 创建虚拟DOM
      * @returns {*|jQuery}
      * @private
      */
     _createVirtualDom: function() {
         "use strict";
-        return $('<div class="virtual-dom">' +
-                    '<span class="dom-text" style="display: inline-block;">' + this._text + '</span>' +
-                    '<input class="dom-input" type="text" value="' + this._text + '">' +
-                '</div>').css({
+        var attrs = this._element.attrs;
+        return $('<div class="virtual-dom">' + attrs.text + '</div>').css({
             position: 'absolute',
             bottom: 0,
             right: 0,
             zIndex: -999999,
-            fontFamily: this._fontFamily,
-            fontSize: this._fontSize,
-            fontColor: this._fontColor,
+            fontFamily: attrs['font-family'],
+            fontSize: attrs['font-size'],
             visibility: 'hidden',
             lineHeight: 1
         }).appendTo(this._paper.canvas.parentNode);
@@ -3116,65 +3096,27 @@ $.extend(TextShapeBox.prototype, {
 
         this._$virtualDom = this._createVirtualDom();
 
-        this._width = this._$virtualDom.find('.dom-text').width();
-        this._height = this._$virtualDom.find('.dom-input').height();
+        this._width = this._$virtualDom.width();
+        this._height = this._$virtualDom.height();
+
+        if (CONFIG.DEBUG === true) {
+            console.log('this._width:' + this._width);
+            console.log('this._height:' + this._height);
+        }
 
         this._element.attr({
-            text: this._text,
             width: this._width,
             height: this._height
         });
     },
 
-    _rebuild: function() {
+    /**
+     * 重构
+     * @private
+     */
+    rebuild: function() {
         "use strict";
         this._setVirtualDom();
-        this._setUI();
-        this._scaleTool.rebuild();
-    },
-
-    _hideUi: function() {
-        "use strict";
-        this._$ui.css({
-            zIndex: 1
-        }).hide();
-    },
-
-    _showUi: function() {
-        "use strict";
-        this._$ui.css({
-                zIndex: 3
-            })
-            .show()
-            .find('input[type="text"]')
-            .val(this._text)
-            .select()
-            .focus();
-    },
-
-    _bind: function() {
-        "use strict";
-        this._bindDrag();
-        this._bindHover();
-        this._bindClick();
-    },
-
-    getUI: function() {
-        "use strict";
-        return this._$ui;
-    },
-
-    toggle: function(type) {
-        "use strict";
-        var $text = this._$ui.find('.text');
-        var $svg = this._$ui.find('svg');
-        if (type === TextShapeBox.Type_Svg) {
-            $text.hide();
-            $svg.show();
-        } else {
-            $text.show();
-            $svg.hide();
-        }
     },
 
     focus: function() {
@@ -3182,30 +3124,20 @@ $.extend(TextShapeBox.prototype, {
         this.selected();
     },
 
-    onSelected: function() {
-        "use strict";
-        this._element.hide();
-        this._rebuild();
-        this._showUi();
-    },
-
-    /**
-     * 当矩形框在移动时
-     */
-    onRectMove: function(dx, dy) {
-        "use strict";
-        // TODO 改变字体大小
-    },
-
     onDrag: function(newX, newY) {
         "use strict";
+    },
+
+    onSelected: function() {
+        "use strict";
+        this.rebuild();
     }
 
 });
 
 module.exports = TextShapeBox;
 
-},{"./shapeBox.js":12}],14:[function(require,module,exports){
+},{"./config.js":8,"./shapeBox.js":12}],14:[function(require,module,exports){
 /**
  * @file
  * @author jinguangguo
@@ -3341,8 +3273,7 @@ var Pic = React.createClass({displayName: "Pic",
                     React.createElement("button", {className: "ui orange basic button", onClick: this.preview}, "预览"), 
                     React.createElement("button", {className: "ui yellow basic button", onClick: this.saveToServer}, "保存至后台"), 
                     React.createElement("button", {className: "ui olive basic button", onClick: this.saveAs}, "另存为图片"), 
-                    React.createElement("button", {className: "ui green basic button", onClick: this.clear}, "清空"), 
-                    React.createElement("button", {className: "ui teal basic button", onClick: this.add}, "添加文本")
+                    React.createElement("button", {className: "ui green basic button", onClick: this.clear}, "清空")
                     /*
                      <button className="ui teal basic button">Teal</button>
                      <button className="ui blue basic button">Blue</button>

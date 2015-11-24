@@ -109,6 +109,9 @@ mark {
   display: inline-block;
   vertical-align: middle; }
 
+body {
+  -webkit-text-size-adjust: none; }
+
 .main {
   width: 920px;
   margin: 0 auto;

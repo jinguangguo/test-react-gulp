@@ -9,6 +9,11 @@
 @import 'common/reset';
 @import 'common/function';
 
+// 解决chrome12像素大小的限制
+body {
+    -webkit-text-size-adjust:none;
+}
+
 .main {
     width: 920px;
     margin: 0 auto;

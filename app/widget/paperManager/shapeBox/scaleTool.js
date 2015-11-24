@@ -236,23 +236,37 @@ $.extend(ScaleTool.prototype, {
 
             var rectInstance = this;
 
+            function doLog() {
+                if (CONFIG.DEBUG) {
+                    console.log('dx:' + dx + ', dy:' + dy);
+                }
+            }
+
+            doLog();
+
             // OK
             function setElementSize() {
                 var resultD;
-                if (Math.abs(dx) >= Math.abs(dy)) {
-                    resultD = dx;
-                } else {
-                    resultD = dy;
-                }
+                //if (Math.abs(dx) >= Math.abs(dy)) {
+                //    resultD = dx;
+                //} else {
+                //    resultD = dy;
+                //}
+
+                resultD = dx;
+
+                // 以横坐标为基准进行自体的放大与缩小
                 that._element.attr({
-                    'font-size': rectInstance.data('initFontSize') + resultD,
-                    'width': rectInstance.data('initElementWidth') + resultD * 2,
-                    'height': rectInstance.data('initElementHeight') + resultD * 2
+                    'font-size': rectInstance.data('initFontSize') + resultD
                 });
+                if (CONFIG.DEBUG === true) {
+                    console.log('that._element.attrs:' + JSON.stringify(that._element.attrs));
+                }
             }
 
             setElementSize();
 
+            // 拖动过程中，对选中框和小矩阵的位置进行调整
             that.resetPosition();
 
             if (that._shapeBox.onRectMove) {
@@ -263,14 +277,20 @@ $.extend(ScaleTool.prototype, {
             if (CONFIG.DEBUG === true) {
                 console.log('start move ...');
             }
+            // 隐藏小矩阵和选中矿
+            that.hide();
+            // 销毁菜单栏
+            that._shapeBox._menuTool.destroy();
             var attrs = that._element.attrs;
             this.data('initFontSize', attrs['font-size']);
-            this.data('initElementWidth', attrs.width);
-            this.data('initElementHeight', attrs.height);
         }, function(x, y, event) {
             if (CONFIG.DEBUG === true) {
                 console.log('end move ...');
             }
+            // 执行下面两个方法
+            // 1.重新设置文本框的大小
+            // 2.重新设置小矩阵和选中框
+            that._shapeBox.selected();
         });
     },
 
@@ -306,6 +326,16 @@ $.extend(ScaleTool.prototype, {
                 this._bindDrag();
         }
 
+    },
+
+    hide: function() {
+        "use strict";
+        this._rt.attr({
+            opacity: 0
+        });
+        this._srt.attr({
+            opacity: 0
+        });
     },
 
     destroy: function() {

@@ -134,7 +134,6 @@ var Pic = React.createClass({
                     <button className="ui yellow basic button" onClick={this.saveToServer}>保存至后台</button>
                     <button className="ui olive basic button" onClick={this.saveAs}>另存为图片</button>
                     <button className="ui green basic button" onClick={this.clear}>清空</button>
-                    <button className="ui teal basic button" onClick={this.add}>添加文本</button>
                     {/*
                      <button className="ui teal basic button">Teal</button>
                      <button className="ui blue basic button">Blue</button>

@@ -18,8 +18,8 @@ var MenuTool = function(element, shapeBox) {
     this._init();
 };
 
-MenuTool.SHOW_SHIFT_X = 0;
-MenuTool.SHOW_SHIFT_Y = 0;
+MenuTool.SHOW_SHIFT_X = 5;
+MenuTool.SHOW_SHIFT_Y = 10;
 
 MenuTool.MUNU_HEIGHT = 20;
 
@@ -49,6 +49,10 @@ $.extend(MenuTool.prototype, {
                 '<ul class="menu-list">',
 
                     // 以下是文本功能
+                    '<li class="item item-text">',
+                        '<a href="javascript:;" id="edit">编辑</a>',
+                    '</li>',
+
                     '<li class="item item-text">',
                         '<a href="javascript:;" id="fontFamily">字体</a>',
                     '</li>',
@@ -95,6 +99,32 @@ $.extend(MenuTool.prototype, {
         "use strict";
 
         var that = this;
+
+        this._$ui.find('#edit').click(function() {
+            var getHtml = function() {
+                var attrs = that._element.attrs;
+                return (
+                    '<div class="module-edit">' +
+                        '<label class="edit-label">' +
+                            '请输入文本内容：' +
+                            '<input type="text" class="j-edit" value="' + attrs.text + '">' +
+                        '</label>' +
+                    '</div>'
+                );
+            };
+            artDialog({
+                title: '编辑',
+                content: getHtml(),
+                okValue: '确定',
+                ok: function() {
+                    var value = this.$content.find('.j-edit').val();
+                    that._element.attr({
+                        text: value
+                    });
+                    that._shapeBox.selected();
+                }
+            }).showModal();
+        });
 
         // 删除 - ok
         this._$ui.find('#remove').click(function() {
@@ -281,6 +311,9 @@ $.extend(MenuTool.prototype, {
     _setMenuPositionOfText: function() {
         "use strict";
         var attrs = this._element.attrs;
+        if (CONFIG.DEBUG === true) {
+            console.log('attrs.width:' + attrs.width);
+        }
         this._x = attrs.x - attrs.width / 2 - MenuTool.SHOW_SHIFT_X;
         this._y = attrs.y - attrs.height / 2 - MenuTool.SHOW_SHIFT_Y- MenuTool.MUNU_HEIGHT;
     },
