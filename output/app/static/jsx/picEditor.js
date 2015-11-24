@@ -2512,6 +2512,10 @@ $.extend(ScaleTool.prototype, {
         }
     },
 
+    /**
+     * 矫正选中框的位置
+     * @private
+     */
     _resetSelectRectPosition: function() {
         "use strict";
         var rectPosition;
@@ -2612,7 +2616,8 @@ $.extend(ScaleTool.prototype, {
             'fill': 'none',
             'stroke': '#000',
             'stroke-opacity': 0.3,
-            'stroke-width': 1
+            'stroke-width': 1,
+            'cursor': 'default'
         });
     },
 
@@ -2625,6 +2630,14 @@ $.extend(ScaleTool.prototype, {
         var _startTransformY = 0;   // 始终存储已经移动了的距离
         var _dx = 0;
         var _dy = 0;
+
+        var getHeightByWidth = (function(that) {
+            var attrs = that._element.attrs;
+            var percentage = attrs.width / attrs.height;
+            return function(width) {
+                return width / percentage;
+            };
+        })(this);
 
         that._rt.drag(function(dx, dy, x, y, event) {
 
@@ -2653,9 +2666,12 @@ $.extend(ScaleTool.prototype, {
 
             // OK
             function setElementSize() {
+                var newWidth = rectInstance.data('initElementWidth') + dx;
+                var newHeight = getHeightByWidth(newWidth);
+
                 that._element.attr({
-                    width: rectInstance.data('initElementWidth') + dx,
-                    height: rectInstance.data('initElementHeight') + dy
+                    width: newWidth,
+                    height: newHeight
                 });
             }
 
@@ -2760,8 +2776,6 @@ $.extend(ScaleTool.prototype, {
         "use strict";
 
         this.destroy();
-
-        var that = this;
 
         var rectPosition = this._getRectPosition();
 
