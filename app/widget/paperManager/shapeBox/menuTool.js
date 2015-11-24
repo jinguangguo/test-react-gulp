@@ -18,8 +18,10 @@ var MenuTool = function(element, shapeBox) {
     this._init();
 };
 
-MenuTool.SHOW_SHIFT_X = 5;
-MenuTool.SHOW_SHIFT_Y = 50;
+MenuTool.SHOW_SHIFT_X = 0;
+MenuTool.SHOW_SHIFT_Y = 0;
+
+MenuTool.MUNU_HEIGHT = 20;
 
 MenuTool.COPY_SHIFT_X = 30;
 MenuTool.COPY_SHIFT_Y = 30;
@@ -273,14 +275,14 @@ $.extend(MenuTool.prototype, {
         "use strict";
         var attrs = this._element.attrs;
         this._x = attrs.x - MenuTool.SHOW_SHIFT_X;
-        this._y = attrs.y - MenuTool.SHOW_SHIFT_Y;
+        this._y = attrs.y - MenuTool.SHOW_SHIFT_Y - MenuTool.MUNU_HEIGHT;
     },
 
     _setMenuPositionOfText: function() {
         "use strict";
         var attrs = this._element.attrs;
-        this._x = attrs.x - MenuTool.SHOW_SHIFT_X;
-        this._y = attrs.y - MenuTool.SHOW_SHIFT_Y;
+        this._x = attrs.x - attrs.width / 2 - MenuTool.SHOW_SHIFT_X;
+        this._y = attrs.y - attrs.height / 2 - MenuTool.SHOW_SHIFT_Y- MenuTool.MUNU_HEIGHT;
     },
 
     _showMenu: function() {
@@ -314,11 +316,8 @@ $.extend(MenuTool.prototype, {
 
     rebuild: function() {
         "use strict";
-
         this.destroy();
-
         var that = this;
-
         var ShapeBoxSuper = this._shapeBox.super;
         switch (this._shapeBox._type) {
             case ShapeBoxSuper.Type_Text:

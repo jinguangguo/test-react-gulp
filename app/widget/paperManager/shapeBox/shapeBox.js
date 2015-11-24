@@ -100,8 +100,8 @@ ShapeBox.prototype = {
     selected: function() {
         "use strict";
         this.onSelected();
-        this._scaleTool.rebuild();
-        this._menuTool.rebuild();
+        this._showSelectBar();
+        this._showToolbar();
     },
 
     unselected: function() {
@@ -138,22 +138,33 @@ ShapeBox.prototype = {
                 if (CONFIG.DEBUG === true) {
                     console.log('start move ...');
                 }
+                that._menuTool.destroy();
             }, function(x, y, event) {
                 if (CONFIG.DEBUG === true) {
                     console.log('end move ...');
                 }
                 that._x = this.attrs.x;
                 that._y = this.attrs.y;
+                that._showToolbar()
             });
     },
 
     /**
-     * TODO 呈现操作栏
+     * 呈现操作栏
      * @private
      */
     _showToolbar: function() {
         "use strict";
+        this._menuTool.rebuild();
+    },
 
+    /**
+     * 呈现选中栏
+     * @private
+     */
+    _showSelectBar: function() {
+        "use strict";
+        this._scaleTool.rebuild();
     },
 
     /**
