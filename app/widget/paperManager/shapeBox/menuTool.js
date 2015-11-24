@@ -79,6 +79,10 @@ $.extend(MenuTool.prototype, {
                     '<li class="item">',
                         '<a href="javascript:;" id="opacity">透明度</a>',
                     '</li>',
+
+                    '<li class="item">',
+                        '<a href="javascript:;" id="rotate">旋转</a>',
+                    '</li>',
                 '</ul>',
             '</div>'
         ].join('');
@@ -227,6 +231,33 @@ $.extend(MenuTool.prototype, {
                         'fill': fontColor,
                         'font-weight': fontBold
                     });
+                }
+            });
+            dialog.showModal();
+        });
+
+        // 旋转
+        this._$ui.find('#rotate').click(function() {
+
+            var getHtml = function() {
+                return (
+                    '<div class="module-rotate">' +
+                        '<p class="row">' +
+                            '<label class="link-label">' +
+                                '请输入旋转角度：' +
+                                '<input type="number" class="j-rotate">' +
+                            '</label>' +
+                        '</p>' +
+                    '</div>'
+                );
+            };
+
+            var dialog = artDialog({
+                title: '提示',
+                content: getHtml(),
+                ok: function() {
+                    var rotate = this.$content.find('.j-rotate').val();
+                    that._element.rotate(rotate);
                 }
             });
             dialog.showModal();
