@@ -31,7 +31,29 @@ ShapeBox.unSelectAll = function() {
     "use strict";
     $.map(ShapeBox.instances, function(shapeBox, index) {
         shapeBox.unselected();
-    })
+    });
+};
+
+ShapeBox.add = function(instance) {
+    "use strict";
+    ShapeBox.instances.push(instance);
+};
+
+ShapeBox.remove = function(instance) {
+    "use strict";
+    $.map(ShapeBox.instances, function(shapeBox, index) {
+        if (shapeBox === instance) {
+            ShapeBox.instances.splice(index, 1);
+        }
+    });
+};
+
+ShapeBox.clear = function() {
+    "use strict";
+    $.map(ShapeBox.instances, function(shapeBox, index) {
+        shapeBox.destroy();
+    });
+    ShapeBox.instances = [];
 };
 
 // 生成的对象数量
@@ -81,7 +103,7 @@ $.extend(ShapeBox.prototype, {
         this._scaleTool = new ScaleTool(this._element, this);
         this._menuTool = new MenuTool(this._element, this);
         ShapeBox.boxCount++;
-        ShapeBox.instances.push(this);
+        ShapeBox.add(this);
     },
 
     _bind: function() {
@@ -161,6 +183,9 @@ $.extend(ShapeBox.prototype, {
         return this._type;
     },
 
+    /**
+     * 外界销毁实例，只需要调用这个方法即可
+     */
     destroy: function() {
 
         "use strict";
@@ -180,6 +205,8 @@ $.extend(ShapeBox.prototype, {
 
         this._menuTool.destroy();
         this._menuTool = null;
+
+        ShapeBox.remove(this);
     }
 
 });

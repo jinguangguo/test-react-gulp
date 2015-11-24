@@ -15,33 +15,8 @@ var _private = {
 
     $dom: null,
 
-    shapeArray: [],
+    shapeBoxArray: []
 
-    /**
-     * 设置文本的出现位置的坐标
-     * @param width
-     * @param height
-     * @private
-     */
-    _setCenterPosition: function(width, height) {
-        "use strict";
-        this.centerX = width / 2;
-        this.centerY = height / 4;
-    },
-
-    _bindPaper: function() {
-        "use strict";
-        //$(this.paper.canvas).click(function(event) {
-        //    $.map(_private.shapeArray, function(shape, index) {
-        //        console.log('all blur ...');
-        //        if (shape._element.isPointInside(event.pageX, event.pageY) === true) {
-        //
-        //        } else {
-        //            shape.blur();
-        //        }
-        //    });
-        //});
-    }
 };
 
 var _public = {
@@ -54,7 +29,6 @@ var _public = {
     createPaper: function(option) {
         "use strict";
         window.paper = _private.paper = Raphael(option.container[0], option.width, option.height);
-        _private._bindPaper();
         _private.$dom = option.container;
     },
 
@@ -67,7 +41,7 @@ var _public = {
             height: option.imgHeight,
             $parent: _private.$dom
         });
-        _private.shapeArray.push(imageShapeBox);
+        _private.shapeBoxArray.push(imageShapeBox);
     },
 
     /**
@@ -79,8 +53,7 @@ var _public = {
             text: text,
             fontFamily: style
         });
-        _private.shapeArray.push(textShapeBox);
-        return textShapeBox;
+        _private.shapeBoxArray.push(textShapeBox);
     },
 
     /**
@@ -97,7 +70,9 @@ var _public = {
      */
     clear: function() {
         "use strict";
-        _private.paper.clear();
+        $.map(_private.shapeBoxArray, function(instance, index) {
+            instance.destroy();
+        });
     },
 
     /**
