@@ -104,13 +104,14 @@
     }
 
     &-text {
-        input.input {
+        .input {
             display: inline-block;
             line-height: 1;
             vertical-align: middle;
             padding: 0;
             border: 1px solid #ddd;
             outline: 0;
+            word-break: break-all;
         }
     }
 

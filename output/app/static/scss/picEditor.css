@@ -663,13 +663,14 @@ mark {
         transform: rotate(315deg); }
   .paper-shape--hover {
     border: 1px #dcddde dashed; }
-  .paper-shape-text input.input {
+  .paper-shape-text .input {
     display: inline-block;
     line-height: 1;
     vertical-align: middle;
     padding: 0;
     border: 1px solid #ddd;
-    outline: 0; }
+    outline: 0;
+    word-break: break-all; }
 
 .paper-menu {
   position: absolute;

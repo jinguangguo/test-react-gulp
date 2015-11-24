@@ -80,13 +80,12 @@ $.extend(TextShapeBox.prototype, {
         if (this._$ui) {
             _$ui = this._$ui;
         } else {
-            var html = [
+            _$ui = $([
                 '<div class="paper-shape paper-shape-text">',
-                    '<input type="text" class="input" style="opacity: 0.8; width: 100%;">',
+                    '<input class="input" style="opacity: 0.8; width: 100%;">',
                 '</div>'
-            ].join('');
-            _$ui = $(html);
-            _$ui.find('input[type="text"]').on('blur', function() {
+            ].join(''));
+            _$ui.find('.input').on('blur', function() {
                 that._element.show();
                 that._text = $(this).val();
                 that._rebuild();
