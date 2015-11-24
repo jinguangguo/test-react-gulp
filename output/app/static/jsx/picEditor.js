@@ -2678,10 +2678,6 @@ $.extend(ScaleTool.prototype, {
             setElementSize();
             that.resetPosition();
 
-            if (that._shapeBox.onRectMove) {
-                that._shapeBox.onRectMove(dx, dy);
-            }
-
         }, function(x, y, event) {
             if (CONFIG.DEBUG) {
                 console.log('start move ...');
@@ -2694,10 +2690,17 @@ $.extend(ScaleTool.prototype, {
             this.data('initElementWidth', attrs.width);
             this.data('initElementHeight', attrs.height);
 
+            // 销毁菜单栏
+            that._shapeBox._menuTool.destroy();
+
         }, function(x, y, event) {
             if (CONFIG.DEBUG) {
                 console.log('end move ...');
             }
+            // 执行下面两个方法
+            // 1.重新设置文本框的大小
+            // 2.重新设置小矩阵和选中框
+            that._shapeBox.selected();
         });
     },
 
@@ -2746,10 +2749,6 @@ $.extend(ScaleTool.prototype, {
 
             // 拖动过程中，对选中框和小矩阵的位置进行调整
             that.resetPosition();
-
-            if (that._shapeBox.onRectMove) {
-                that._shapeBox.onRectMove(dx, dy);
-            }
 
         }, function(x, y, event) {
             if (CONFIG.DEBUG === true) {
@@ -2857,6 +2856,16 @@ var ShapeBox = function(type) {
 ShapeBox.Type_Text = 'TEXT';
 ShapeBox.Type_Image = 'IMAGE';
 
+// 所有实例
+ShapeBox.instances = [];
+
+ShapeBox.unSelectAll = function() {
+    "use strict";
+    $.map(ShapeBox.instances, function(shapeBox, index) {
+        shapeBox.unselected();
+    })
+};
+
 // 生成的对象数量
 ShapeBox.boxCount = 0;
 
@@ -2900,13 +2909,11 @@ $.extend(ShapeBox.prototype, {
 
     init: function() {
         "use strict";
-        this._element.attr({
-            title: '双击可编辑'
-        });
         this._bind();
         this._scaleTool = new ScaleTool(this._element, this);
         this._menuTool = new MenuTool(this._element, this);
         ShapeBox.boxCount++;
+        ShapeBox.instances.push(this);
     },
 
     _bind: function() {
@@ -2915,8 +2922,9 @@ $.extend(ShapeBox.prototype, {
         var that = this;
 
         // 选中
-        this._element.dblclick(function(event) {
+        this._element.click(function(event) {
             event.stopPropagation();
+            console.log('click...');
             that.selected();
         });
 
@@ -2939,11 +2947,13 @@ $.extend(ShapeBox.prototype, {
             // 改变_scaleTool的位置
             that._scaleTool.resetPosition();
         }, function(x, y, event) {
+            event.stopPropagation();
             if (CONFIG.DEBUG === true) {
                 console.log('start move ...');
             }
             that._menuTool.destroy();
-        }, function(x, y, event) {
+        }, function(event) {
+            event.stopPropagation();
             if (CONFIG.DEBUG === true) {
                 console.log('end move ...');
             }
@@ -2958,14 +2968,19 @@ $.extend(ShapeBox.prototype, {
      */
     selected: function() {
         "use strict";
+        ShapeBox.unSelectAll();
         this.onSelected();
         this._scaleTool.rebuild();
         this._menuTool.rebuild();
     },
 
+    /**
+     * 取消选中
+     */
     unselected: function() {
         "use strict";
-
+        this._scaleTool.destroy();
+        this._menuTool.destroy();
     },
 
     setType: function(type) {
@@ -3285,7 +3300,6 @@ var Pic = React.createClass({displayName: "Pic",
                 React.createElement("div", {className: "module-buttons"}, 
                     React.createElement("button", {className: "ui teal basic button", onClick: this.upload}, "上传"), 
                     React.createElement("button", {className: "ui orange basic button", onClick: this.preview}, "预览"), 
-                    React.createElement("button", {className: "ui yellow basic button", onClick: this.saveToServer}, "保存至后台"), 
                     React.createElement("button", {className: "ui olive basic button", onClick: this.saveAs}, "另存为图片"), 
                     React.createElement("button", {className: "ui green basic button", onClick: this.clear}, "清空")
                     /*

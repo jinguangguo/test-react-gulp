@@ -24,6 +24,16 @@ var ShapeBox = function(type) {
 ShapeBox.Type_Text = 'TEXT';
 ShapeBox.Type_Image = 'IMAGE';
 
+// 所有实例
+ShapeBox.instances = [];
+
+ShapeBox.unSelectAll = function() {
+    "use strict";
+    $.map(ShapeBox.instances, function(shapeBox, index) {
+        shapeBox.unselected();
+    })
+};
+
 // 生成的对象数量
 ShapeBox.boxCount = 0;
 
@@ -67,13 +77,11 @@ $.extend(ShapeBox.prototype, {
 
     init: function() {
         "use strict";
-        this._element.attr({
-            title: '双击可编辑'
-        });
         this._bind();
         this._scaleTool = new ScaleTool(this._element, this);
         this._menuTool = new MenuTool(this._element, this);
         ShapeBox.boxCount++;
+        ShapeBox.instances.push(this);
     },
 
     _bind: function() {
@@ -82,8 +90,9 @@ $.extend(ShapeBox.prototype, {
         var that = this;
 
         // 选中
-        this._element.dblclick(function(event) {
+        this._element.click(function(event) {
             event.stopPropagation();
+            console.log('click...');
             that.selected();
         });
 
@@ -106,11 +115,13 @@ $.extend(ShapeBox.prototype, {
             // 改变_scaleTool的位置
             that._scaleTool.resetPosition();
         }, function(x, y, event) {
+            event.stopPropagation();
             if (CONFIG.DEBUG === true) {
                 console.log('start move ...');
             }
             that._menuTool.destroy();
-        }, function(x, y, event) {
+        }, function(event) {
+            event.stopPropagation();
             if (CONFIG.DEBUG === true) {
                 console.log('end move ...');
             }
@@ -125,14 +136,19 @@ $.extend(ShapeBox.prototype, {
      */
     selected: function() {
         "use strict";
+        ShapeBox.unSelectAll();
         this.onSelected();
         this._scaleTool.rebuild();
         this._menuTool.rebuild();
     },
 
+    /**
+     * 取消选中
+     */
     unselected: function() {
         "use strict";
-
+        this._scaleTool.destroy();
+        this._menuTool.destroy();
     },
 
     setType: function(type) {
