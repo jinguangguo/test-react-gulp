@@ -2336,6 +2336,7 @@ $.extend(MenuTool.prototype, {
                         'fill': fontColor,
                         'font-weight': fontBold
                     });
+                    that._shapeBox.selected();
                 }
             });
             dialog.showModal();
@@ -3122,7 +3123,8 @@ $.extend(TextShapeBox.prototype, {
             right: 0,
             zIndex: -999999,
             fontFamily: attrs['font-family'],
-            fontSize: attrs['font-size'],
+            fontSize: +attrs['font-size'],
+            fontWeight: attrs['font-weight'],
             visibility: 'hidden',
             lineHeight: 1
         }).appendTo(this._paper.canvas.parentNode);

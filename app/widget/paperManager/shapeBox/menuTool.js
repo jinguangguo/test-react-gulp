@@ -263,6 +263,7 @@ $.extend(MenuTool.prototype, {
                         'fill': fontColor,
                         'font-weight': fontBold
                     });
+                    that._shapeBox.selected();
                 }
             });
             dialog.showModal();
