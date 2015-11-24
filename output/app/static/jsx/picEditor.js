@@ -1916,6 +1916,9 @@ module.exports = _public;
  */
 
 module.exports = {
+
+    DEBUG: true,
+
     FONTS: [
         {
             name: 'Arial',
@@ -2100,8 +2103,10 @@ var MenuTool = function(element, shapeBox) {
     this._init();
 };
 
-MenuTool.SHOW_SHIFT_X = 5;
-MenuTool.SHOW_SHIFT_Y = 50;
+MenuTool.SHOW_SHIFT_X = 0;
+MenuTool.SHOW_SHIFT_Y = 0;
+
+MenuTool.MUNU_HEIGHT = 20;
 
 MenuTool.COPY_SHIFT_X = 30;
 MenuTool.COPY_SHIFT_Y = 30;
@@ -2355,14 +2360,14 @@ $.extend(MenuTool.prototype, {
         "use strict";
         var attrs = this._element.attrs;
         this._x = attrs.x - MenuTool.SHOW_SHIFT_X;
-        this._y = attrs.y - MenuTool.SHOW_SHIFT_Y;
+        this._y = attrs.y - MenuTool.SHOW_SHIFT_Y - MenuTool.MUNU_HEIGHT;
     },
 
     _setMenuPositionOfText: function() {
         "use strict";
         var attrs = this._element.attrs;
-        this._x = attrs.x - MenuTool.SHOW_SHIFT_X;
-        this._y = attrs.y - MenuTool.SHOW_SHIFT_Y;
+        this._x = attrs.x - attrs.width / 2 - MenuTool.SHOW_SHIFT_X;
+        this._y = attrs.y - attrs.height / 2 - MenuTool.SHOW_SHIFT_Y- MenuTool.MUNU_HEIGHT;
     },
 
     _showMenu: function() {
@@ -2396,11 +2401,8 @@ $.extend(MenuTool.prototype, {
 
     rebuild: function() {
         "use strict";
-
         this.destroy();
-
         var that = this;
-
         var ShapeBoxSuper = this._shapeBox.super;
         switch (this._shapeBox._type) {
             case ShapeBoxSuper.Type_Text:
@@ -2430,6 +2432,8 @@ module.exports = MenuTool;
  * @author jinguangguo
  * @date 2015/11/20
  */
+
+var CONFIG = require('./config');
 
 var ScaleTool = function(element, shapeBox) {
     "use strict";
@@ -2524,7 +2528,9 @@ $.extend(ScaleTool.prototype, {
                 };
         }
 
-        console.log('[_getRectPosition][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        if (CONFIG.DEBUG === true) {
+            console.log('[_getRectPosition][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        }
 
         return result;
     },
@@ -2559,8 +2565,9 @@ $.extend(ScaleTool.prototype, {
                     height: attrs.height + ScaleTool.RECT_PADDING * 2
                 };
         }
-
-        console.log('[_getSelectRectAttrs][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        if (CONFIG.DEBUG === true) {
+            console.log('[_getSelectRectAttrs][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        }
 
         return result;
     },
@@ -2591,11 +2598,13 @@ $.extend(ScaleTool.prototype, {
             var rectInstance = this;
 
             function doLog() {
-                console.log('x:' + x + ', y:' + y);
-                console.log('dx:' + dx + ', dy:' + dy);
                 var newX = _startTransformX + dx;
                 var newY = _startTransformY + dy;
-                console.log('[move] newX:' + newX + ', newY:' + newY);
+                if (CONFIG.DEBUG) {
+                    console.log('x:' + x + ', y:' + y);
+                    console.log('dx:' + dx + ', dy:' + dy);
+                    console.log('[move] newX:' + newX + ', newY:' + newY);
+                }
             }
 
             // OK
@@ -2625,8 +2634,9 @@ $.extend(ScaleTool.prototype, {
             }
 
         }, function(x, y, event) {
-            console.log('start move ...');
-
+            if (CONFIG.DEBUG) {
+                console.log('start move ...');
+            }
             var attrs = that._element.attrs;
 
             this.data('_startTransformX', _startTransformX + _dx);
@@ -2636,7 +2646,9 @@ $.extend(ScaleTool.prototype, {
             this.data('initElementHeight', attrs.height);
 
         }, function(x, y, event) {
-            console.log('end move ...');
+            if (CONFIG.DEBUG) {
+                console.log('end move ...');
+            }
         });
     },
 
@@ -2677,13 +2689,17 @@ $.extend(ScaleTool.prototype, {
             }
 
         }, function(x, y, event) {
-            console.log('start move ...');
+            if (CONFIG.DEBUG === true) {
+                console.log('start move ...');
+            }
             var attrs = that._element.attrs;
             this.data('initFontSize', attrs['font-size']);
             this.data('initElementWidth', attrs.width);
             this.data('initElementHeight', attrs.height);
         }, function(x, y, event) {
-            console.log('end move ...');
+            if (CONFIG.DEBUG === true) {
+                console.log('end move ...');
+            }
         });
     },
 
@@ -2737,7 +2753,7 @@ $.extend(ScaleTool.prototype, {
 
 module.exports = ScaleTool;
 
-},{}],12:[function(require,module,exports){
+},{"./config":8}],12:[function(require,module,exports){
 /**
  * @file 形状类的超类
  * @author jinguangguo
@@ -2747,6 +2763,8 @@ module.exports = ScaleTool;
 var ScaleTool = require('./scaleTool.js');
 
 var MenuTool = require('./menuTool.js');
+
+var CONFIG = require('./config.js');
 
 var ShapeBox = function(type) {
     "use strict";
@@ -2831,7 +2849,6 @@ ShapeBox.prototype = {
         var that = this;
         this._element.dblclick(function(event) {
             event.stopPropagation();
-            console.log('the element dbclick...');
             that.selected();
         });
     },
@@ -2839,8 +2856,8 @@ ShapeBox.prototype = {
     selected: function() {
         "use strict";
         this.onSelected();
-        this._scaleTool.rebuild();
-        this._menuTool.rebuild();
+        this._showSelectBar();
+        this._showToolbar();
     },
 
     unselected: function() {
@@ -2857,13 +2874,15 @@ ShapeBox.prototype = {
         var that = this;
         this._element
             .drag(function(dx, dy, x, y, event) {
-                console.log('x:' + x + ', y:' + y);
-                console.log('dx:' + dx + ', dy:' + dy);
                 var startX = that._x;
                 var startY = that._y;
                 var newX = startX + dx;
                 var newY = startY + dy;
-                console.log('[move] newX:' + newX + ', newY:' + newY);
+                if (CONFIG.DEBUG === true) {
+                    console.log('x:' + x + ', y:' + y);
+                    console.log('dx:' + dx + ', dy:' + dy);
+                    console.log('[move] newX:' + newX + ', newY:' + newY);
+                }
                 this.attr({
                     x: newX,
                     y: newY
@@ -2872,21 +2891,36 @@ ShapeBox.prototype = {
                 // 改变_scaleTool的位置
                 that._scaleTool.resetPosition();
             }, function(x, y, event) {
-                console.log('start move ...');
+                if (CONFIG.DEBUG === true) {
+                    console.log('start move ...');
+                }
+                that._menuTool.destroy();
             }, function(x, y, event) {
-                console.log('end move ...');
+                if (CONFIG.DEBUG === true) {
+                    console.log('end move ...');
+                }
                 that._x = this.attrs.x;
                 that._y = this.attrs.y;
+                that._showToolbar()
             });
     },
 
     /**
-     * TODO 呈现操作栏
+     * 呈现操作栏
      * @private
      */
     _showToolbar: function() {
         "use strict";
+        this._menuTool.rebuild();
+    },
 
+    /**
+     * 呈现选中栏
+     * @private
+     */
+    _showSelectBar: function() {
+        "use strict";
+        this._scaleTool.rebuild();
     },
 
     /**
@@ -2934,7 +2968,7 @@ module.exports = ShapeBox;
 
 
 
-},{"./menuTool.js":10,"./scaleTool.js":11}],13:[function(require,module,exports){
+},{"./config.js":8,"./menuTool.js":10,"./scaleTool.js":11}],13:[function(require,module,exports){
 /**
  * @file
  * @author jinguangguo
