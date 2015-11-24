@@ -37,7 +37,14 @@ var ImageShapeBox = function(option) {
     this._childInit();
 };
 
-// 居中显示图片
+/**
+ * 居中显示图片
+ * @param imgWidth
+ * @param imgHeight
+ * @param paperWidth
+ * @param paperHeight
+ * @returns {{left: *, top: *}}
+ */
 function getPositionOfImage(imgWidth, imgHeight, paperWidth, paperHeight) {
     "use strict";
     var leftCha = paperWidth - imgWidth;

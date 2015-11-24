@@ -1793,16 +1793,16 @@ var TextShapeBox = require('./shapeBox/textShapeBox');
 
 var ImageShapeBox = require('./shapeBox/imageShapeBox');
 
-var _private = {
+var paper = null;
 
-    // 画布对象
-    paper: null,
+var shapeBoxArray = [];
 
-    $dom: null,
-
-    shapeBoxArray: []
-
-};
+function unSelectAll() {
+    "use strict";
+    $.map(shapeBoxArray, function(instance, index) {
+        instance.unselected();
+    });
+}
 
 var _public = {
     /**
@@ -1813,20 +1813,22 @@ var _public = {
      */
     createPaper: function(option) {
         "use strict";
-        window.paper = _private.paper = Raphael(option.container[0], option.width, option.height);
-        _private.$dom = option.container;
+        paper = Raphael(option.container[0], option.width, option.height);
+        window.paper = paper;
+        $(paper.canvas).click(function() {
+            unSelectAll();
+        });
     },
 
     loadImage: function(option) {
         "use strict";
         var imageShapeBox = new ImageShapeBox({
-            paper: _private.paper,
+            paper: paper,
             path: option.imgPath,
             width: option.imgWidth,
-            height: option.imgHeight,
-            $parent: _private.$dom
+            height: option.imgHeight
         });
-        _private.shapeBoxArray.push(imageShapeBox);
+        shapeBoxArray.push(imageShapeBox);
     },
 
     /**
@@ -1834,11 +1836,12 @@ var _public = {
      */
     addText: function(text, style) {
         var textShapeBox = new TextShapeBox({
-            paper: _private.paper,
+            paper: paper,
             text: text,
             fontFamily: style
         });
-        _private.shapeBoxArray.push(textShapeBox);
+        textShapeBox.selected();
+        shapeBoxArray.push(textShapeBox);
     },
 
     /**
@@ -1847,7 +1850,7 @@ var _public = {
      */
     getPaper: function() {
         "use strict";
-        return _private.paper;
+        return paper;
     },
 
     /**
@@ -1855,7 +1858,7 @@ var _public = {
      */
     clear: function() {
         "use strict";
-        $.map(_private.shapeBoxArray, function(instance, index) {
+        $.map(shapeBoxArray, function(instance, index) {
             instance.destroy();
         });
     },
@@ -1867,11 +1870,9 @@ var _public = {
     toCanvas: function(canvasDom) {
         "use strict";
         // 1. 先清除选中状态
-        $.map(_private.shapeBoxArray, function(instance, index) {
-            instance.unselected();
-        });
+        unSelectAll();
         // 2. 进行转换成canvas
-        canvg(canvasDom, _private.paper.canvas.outerHTML);
+        canvg(canvasDom, paper.canvas.outerHTML);
     },
 
     /**
@@ -2023,7 +2024,14 @@ var ImageShapeBox = function(option) {
     this._childInit();
 };
 
-// 居中显示图片
+/**
+ * 居中显示图片
+ * @param imgWidth
+ * @param imgHeight
+ * @param paperWidth
+ * @param paperHeight
+ * @returns {{left: *, top: *}}
+ */
 function getPositionOfImage(imgWidth, imgHeight, paperWidth, paperHeight) {
     "use strict";
     var leftCha = paperWidth - imgWidth;
