@@ -81,6 +81,11 @@ var _public = {
      */
     toCanvas: function(canvasDom) {
         "use strict";
+        // 1. 先清除选中状态
+        $.map(_private.shapeBoxArray, function(instance, index) {
+            instance.unselected();
+        });
+        // 2. 进行转换成canvas
         canvg(canvasDom, _private.paper.canvas.outerHTML);
     },
 
