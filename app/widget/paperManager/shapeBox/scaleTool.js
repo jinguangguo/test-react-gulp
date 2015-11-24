@@ -150,7 +150,7 @@ $.extend(ScaleTool.prototype, {
     _setSelectRect: function() {
         "use strict";
         var selectRectAttrs = this._getSelectRectAttrs();
-        this._srt = paper.rect(selectRectAttrs.x, selectRectAttrs.y, selectRectAttrs.width, selectRectAttrs.height).attr({
+        this._srt = this._shapeBox._paper.rect(selectRectAttrs.x, selectRectAttrs.y, selectRectAttrs.width, selectRectAttrs.height).attr({
             'fill': 'none',
             'stroke': '#000',
             'stroke-opacity': 0.3,
@@ -323,7 +323,7 @@ $.extend(ScaleTool.prototype, {
 
         this._setSelectRect();
 
-        this._rt = paper.rect(bottomRight.x, bottomRight.y, ScaleTool.RECT_WH, ScaleTool.RECT_WH).attr({
+        this._rt = this._shapeBox._paper.rect(bottomRight.x, bottomRight.y, ScaleTool.RECT_WH, ScaleTool.RECT_WH).attr({
             cursor: 'nwse-resize',
             fill: '#fff',
             stroke: '#16ab39'

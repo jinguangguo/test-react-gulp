@@ -1793,18 +1793,13 @@ var TextShapeBox = require('./shapeBox/textShapeBox');
 
 var ImageShapeBox = require('./shapeBox/imageShapeBox');
 
-var paper = null;
+var ShapeBox = require('./shapeBox/shapeBox');
 
-var shapeBoxArray = [];
-
-function unSelectAll() {
-    "use strict";
-    $.map(shapeBoxArray, function(instance, index) {
-        instance.unselected();
-    });
-}
+var CONFIG = require('./shapeBox/config');
 
 var _public = {
+    // 画布对象
+    _paper: null,
     /**
      * 基于container画图
      * @param option.container
@@ -1813,22 +1808,20 @@ var _public = {
      */
     createPaper: function(option) {
         "use strict";
-        paper = Raphael(option.container[0], option.width, option.height);
-        window.paper = paper;
-        $(paper.canvas).click(function() {
-            unSelectAll();
+        this._paper = Raphael(option.container[0], option.width, option.height);
+        $(this._paper.canvas).click(function() {
+            ShapeBox.unSelectAll();
         });
     },
 
     loadImage: function(option) {
         "use strict";
-        var imageShapeBox = new ImageShapeBox({
-            paper: paper,
+        new ImageShapeBox({
+            paper: this._paper,
             path: option.imgPath,
             width: option.imgWidth,
             height: option.imgHeight
         });
-        shapeBoxArray.push(imageShapeBox);
     },
 
     /**
@@ -1836,12 +1829,11 @@ var _public = {
      */
     addText: function(text, style) {
         var textShapeBox = new TextShapeBox({
-            paper: paper,
+            paper: this._paper,
             text: text,
             fontFamily: style
         });
         textShapeBox.selected();
-        shapeBoxArray.push(textShapeBox);
     },
 
     /**
@@ -1850,7 +1842,7 @@ var _public = {
      */
     getPaper: function() {
         "use strict";
-        return paper;
+        return this._paper;
     },
 
     /**
@@ -1858,9 +1850,7 @@ var _public = {
      */
     clear: function() {
         "use strict";
-        $.map(shapeBoxArray, function(instance, index) {
-            instance.destroy();
-        });
+        ShapeBox.clear();
     },
 
     /**
@@ -1870,9 +1860,9 @@ var _public = {
     toCanvas: function(canvasDom) {
         "use strict";
         // 1. 先清除选中状态
-        unSelectAll();
+        ShapeBox.unSelectAll();
         // 2. 进行转换成canvas
-        canvg(canvasDom, paper.canvas.outerHTML);
+        canvg(canvasDom, this._paper.canvas.outerHTML);
     },
 
     /**
@@ -1889,7 +1879,7 @@ module.exports = _public;
 
 
 
-},{"./shapeBox/imageShapeBox":9,"./shapeBox/textShapeBox":13}],8:[function(require,module,exports){
+},{"./shapeBox/config":8,"./shapeBox/imageShapeBox":9,"./shapeBox/shapeBox":12,"./shapeBox/textShapeBox":13}],8:[function(require,module,exports){
 /**
  * @file
  * @author jinguangguo
@@ -2202,6 +2192,7 @@ $.extend(MenuTool.prototype, {
         // 删除 - ok
         this._$ui.find('#remove').click(function() {
             that._shapeBox.destroy();
+            that._shapeBox.super.remove(that._shapeBox);
         });
 
         // 复制 - ok
@@ -2336,7 +2327,6 @@ $.extend(MenuTool.prototype, {
                         'fill': fontColor,
                         'font-weight': fontBold
                     });
-                    that._shapeBox.selected();
                 }
             });
             dialog.showModal();
@@ -2601,7 +2591,7 @@ $.extend(ScaleTool.prototype, {
     _setSelectRect: function() {
         "use strict";
         var selectRectAttrs = this._getSelectRectAttrs();
-        this._srt = paper.rect(selectRectAttrs.x, selectRectAttrs.y, selectRectAttrs.width, selectRectAttrs.height).attr({
+        this._srt = this._shapeBox._paper.rect(selectRectAttrs.x, selectRectAttrs.y, selectRectAttrs.width, selectRectAttrs.height).attr({
             'fill': 'none',
             'stroke': '#000',
             'stroke-opacity': 0.3,
@@ -2774,7 +2764,7 @@ $.extend(ScaleTool.prototype, {
 
         this._setSelectRect();
 
-        this._rt = paper.rect(bottomRight.x, bottomRight.y, ScaleTool.RECT_WH, ScaleTool.RECT_WH).attr({
+        this._rt = this._shapeBox._paper.rect(bottomRight.x, bottomRight.y, ScaleTool.RECT_WH, ScaleTool.RECT_WH).attr({
             cursor: 'nwse-resize',
             fill: '#fff',
             stroke: '#16ab39'
@@ -2850,6 +2840,9 @@ ShapeBox.instances = [];
 
 ShapeBox.unSelectAll = function() {
     "use strict";
+    if (CONFIG.DEBUG === true) {
+        console.log('ShapeBox.instances length:' + ShapeBox.instances.length);
+    }
     $.map(ShapeBox.instances, function(shapeBox, index) {
         shapeBox.unselected();
     });
@@ -3027,7 +3020,6 @@ $.extend(ShapeBox.prototype, {
         this._menuTool.destroy();
         this._menuTool = null;
 
-        ShapeBox.remove(this);
     }
 
 });
@@ -3084,8 +3076,6 @@ var TextShapeBox = function(option) {
     // this._width
     // this._height
     this._setVirtualDom();
-
-    this._$ui = null;
 
     this._childInit();
 };

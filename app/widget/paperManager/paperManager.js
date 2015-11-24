@@ -8,18 +8,13 @@ var TextShapeBox = require('./shapeBox/textShapeBox');
 
 var ImageShapeBox = require('./shapeBox/imageShapeBox');
 
-var paper = null;
+var ShapeBox = require('./shapeBox/shapeBox');
 
-var shapeBoxArray = [];
-
-function unSelectAll() {
-    "use strict";
-    $.map(shapeBoxArray, function(instance, index) {
-        instance.unselected();
-    });
-}
+var CONFIG = require('./shapeBox/config');
 
 var _public = {
+    // 画布对象
+    _paper: null,
     /**
      * 基于container画图
      * @param option.container
@@ -28,22 +23,20 @@ var _public = {
      */
     createPaper: function(option) {
         "use strict";
-        paper = Raphael(option.container[0], option.width, option.height);
-        window.paper = paper;
-        $(paper.canvas).click(function() {
-            unSelectAll();
+        this._paper = Raphael(option.container[0], option.width, option.height);
+        $(this._paper.canvas).click(function() {
+            ShapeBox.unSelectAll();
         });
     },
 
     loadImage: function(option) {
         "use strict";
-        var imageShapeBox = new ImageShapeBox({
-            paper: paper,
+        new ImageShapeBox({
+            paper: this._paper,
             path: option.imgPath,
             width: option.imgWidth,
             height: option.imgHeight
         });
-        shapeBoxArray.push(imageShapeBox);
     },
 
     /**
@@ -51,12 +44,11 @@ var _public = {
      */
     addText: function(text, style) {
         var textShapeBox = new TextShapeBox({
-            paper: paper,
+            paper: this._paper,
             text: text,
             fontFamily: style
         });
         textShapeBox.selected();
-        shapeBoxArray.push(textShapeBox);
     },
 
     /**
@@ -65,7 +57,7 @@ var _public = {
      */
     getPaper: function() {
         "use strict";
-        return paper;
+        return this._paper;
     },
 
     /**
@@ -73,9 +65,7 @@ var _public = {
      */
     clear: function() {
         "use strict";
-        $.map(shapeBoxArray, function(instance, index) {
-            instance.destroy();
-        });
+        ShapeBox.clear();
     },
 
     /**
@@ -85,9 +75,9 @@ var _public = {
     toCanvas: function(canvasDom) {
         "use strict";
         // 1. 先清除选中状态
-        unSelectAll();
+        ShapeBox.unSelectAll();
         // 2. 进行转换成canvas
-        canvg(canvasDom, paper.canvas.outerHTML);
+        canvg(canvasDom, this._paper.canvas.outerHTML);
     },
 
     /**

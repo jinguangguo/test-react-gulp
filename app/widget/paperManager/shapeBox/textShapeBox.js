@@ -46,8 +46,6 @@ var TextShapeBox = function(option) {
     // this._height
     this._setVirtualDom();
 
-    this._$ui = null;
-
     this._childInit();
 };
 

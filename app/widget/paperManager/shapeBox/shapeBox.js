@@ -29,6 +29,9 @@ ShapeBox.instances = [];
 
 ShapeBox.unSelectAll = function() {
     "use strict";
+    if (CONFIG.DEBUG === true) {
+        console.log('ShapeBox.instances length:' + ShapeBox.instances.length);
+    }
     $.map(ShapeBox.instances, function(shapeBox, index) {
         shapeBox.unselected();
     });
@@ -206,7 +209,6 @@ $.extend(ShapeBox.prototype, {
         this._menuTool.destroy();
         this._menuTool = null;
 
-        ShapeBox.remove(this);
     }
 
 });

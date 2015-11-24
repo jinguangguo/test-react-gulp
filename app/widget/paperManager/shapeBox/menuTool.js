@@ -129,6 +129,7 @@ $.extend(MenuTool.prototype, {
         // 删除 - ok
         this._$ui.find('#remove').click(function() {
             that._shapeBox.destroy();
+            that._shapeBox.super.remove(that._shapeBox);
         });
 
         // 复制 - ok
@@ -263,7 +264,6 @@ $.extend(MenuTool.prototype, {
                         'fill': fontColor,
                         'font-weight': fontBold
                     });
-                    that._shapeBox.selected();
                 }
             });
             dialog.showModal();
