@@ -8,6 +8,8 @@ var ScaleTool = require('./scaleTool.js');
 
 var MenuTool = require('./menuTool.js');
 
+var CONFIG = require('./config.js');
+
 var ShapeBox = function(type) {
     "use strict";
     // must be override
@@ -91,7 +93,6 @@ ShapeBox.prototype = {
         var that = this;
         this._element.dblclick(function(event) {
             event.stopPropagation();
-            console.log('the element dbclick...');
             that.selected();
         });
     },
@@ -117,13 +118,15 @@ ShapeBox.prototype = {
         var that = this;
         this._element
             .drag(function(dx, dy, x, y, event) {
-                console.log('x:' + x + ', y:' + y);
-                console.log('dx:' + dx + ', dy:' + dy);
                 var startX = that._x;
                 var startY = that._y;
                 var newX = startX + dx;
                 var newY = startY + dy;
-                console.log('[move] newX:' + newX + ', newY:' + newY);
+                if (CONFIG.DEBUG === true) {
+                    console.log('x:' + x + ', y:' + y);
+                    console.log('dx:' + dx + ', dy:' + dy);
+                    console.log('[move] newX:' + newX + ', newY:' + newY);
+                }
                 this.attr({
                     x: newX,
                     y: newY
@@ -132,9 +135,13 @@ ShapeBox.prototype = {
                 // 改变_scaleTool的位置
                 that._scaleTool.resetPosition();
             }, function(x, y, event) {
-                console.log('start move ...');
+                if (CONFIG.DEBUG === true) {
+                    console.log('start move ...');
+                }
             }, function(x, y, event) {
-                console.log('end move ...');
+                if (CONFIG.DEBUG === true) {
+                    console.log('end move ...');
+                }
                 that._x = this.attrs.x;
                 that._y = this.attrs.y;
             });

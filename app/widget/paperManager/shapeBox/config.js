@@ -5,6 +5,9 @@
  */
 
 module.exports = {
+
+    DEBUG: true,
+
     FONTS: [
         {
             name: 'Arial',

@@ -4,6 +4,8 @@
  * @date 2015/11/20
  */
 
+var CONFIG = require('./config');
+
 var ScaleTool = function(element, shapeBox) {
     "use strict";
     this._element = element;
@@ -97,7 +99,9 @@ $.extend(ScaleTool.prototype, {
                 };
         }
 
-        console.log('[_getRectPosition][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        if (CONFIG.DEBUG === true) {
+            console.log('[_getRectPosition][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        }
 
         return result;
     },
@@ -132,8 +136,9 @@ $.extend(ScaleTool.prototype, {
                     height: attrs.height + ScaleTool.RECT_PADDING * 2
                 };
         }
-
-        console.log('[_getSelectRectAttrs][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        if (CONFIG.DEBUG === true) {
+            console.log('[_getSelectRectAttrs][' + this._shapeBox._type + ']' + JSON.stringify(result));
+        }
 
         return result;
     },
@@ -164,11 +169,13 @@ $.extend(ScaleTool.prototype, {
             var rectInstance = this;
 
             function doLog() {
-                console.log('x:' + x + ', y:' + y);
-                console.log('dx:' + dx + ', dy:' + dy);
                 var newX = _startTransformX + dx;
                 var newY = _startTransformY + dy;
-                console.log('[move] newX:' + newX + ', newY:' + newY);
+                if (CONFIG.DEBUG) {
+                    console.log('x:' + x + ', y:' + y);
+                    console.log('dx:' + dx + ', dy:' + dy);
+                    console.log('[move] newX:' + newX + ', newY:' + newY);
+                }
             }
 
             // OK
@@ -198,8 +205,9 @@ $.extend(ScaleTool.prototype, {
             }
 
         }, function(x, y, event) {
-            console.log('start move ...');
-
+            if (CONFIG.DEBUG) {
+                console.log('start move ...');
+            }
             var attrs = that._element.attrs;
 
             this.data('_startTransformX', _startTransformX + _dx);
@@ -209,7 +217,9 @@ $.extend(ScaleTool.prototype, {
             this.data('initElementHeight', attrs.height);
 
         }, function(x, y, event) {
-            console.log('end move ...');
+            if (CONFIG.DEBUG) {
+                console.log('end move ...');
+            }
         });
     },
 
@@ -250,13 +260,17 @@ $.extend(ScaleTool.prototype, {
             }
 
         }, function(x, y, event) {
-            console.log('start move ...');
+            if (CONFIG.DEBUG === true) {
+                console.log('start move ...');
+            }
             var attrs = that._element.attrs;
             this.data('initFontSize', attrs['font-size']);
             this.data('initElementWidth', attrs.width);
             this.data('initElementHeight', attrs.height);
         }, function(x, y, event) {
-            console.log('end move ...');
+            if (CONFIG.DEBUG === true) {
+                console.log('end move ...');
+            }
         });
     },
 
