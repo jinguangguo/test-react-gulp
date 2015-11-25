@@ -1,0 +1,11 @@
+/**
+ * @file
+ * @author jinguangguo
+ * @date 2015/11/25
+ */
+.module-h5pic .title {
+  text-align: center; }
+  .module-h5pic .title-link {
+    float: left;
+    font-size: 1.2rem;
+    font-weight: normal; }
