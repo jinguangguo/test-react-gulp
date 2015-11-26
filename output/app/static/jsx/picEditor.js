@@ -2087,10 +2087,10 @@ var MenuTool = function(element, shapeBox) {
     this._init();
 };
 
-MenuTool.SHOW_SHIFT_X = 5;
+MenuTool.SHOW_SHIFT_X = 6;
 MenuTool.SHOW_SHIFT_Y = 10;
 
-MenuTool.MUNU_HEIGHT = 20;
+MenuTool.MUNU_HEIGHT = 40;
 
 MenuTool.COPY_SHIFT_X = 30;
 MenuTool.COPY_SHIFT_Y = 30;
@@ -2098,7 +2098,8 @@ MenuTool.COPY_SHIFT_Y = 30;
 MenuTool.singleton = null;
 
 MenuTool.isEmptyObject = function(obj) {
-    for ( var name in obj ) {
+    var name;
+    for (name in obj) {
         return false;
     }
     return true;
@@ -2120,22 +2121,38 @@ $.extend(MenuTool.prototype, {
 
     _setUi: function() {
         "use strict";
-        var html = [
-            '<div class="paper-menu paper-menu-'+ this._shapeBox._type +'">',
-                // 'compact'
-                '<div class="ui icon menu">',
+
+        var fontHtml = '';
+
+        var ShapeBoxSuper = this._shapeBox.super;
+
+        switch (this._shapeBox._type) {
+            case ShapeBoxSuper.Type_Text:
+                fontHtml = [
                     '<a class="item">',
                         '<i class="edit icon" id="edit"></i>',
                     '</a>',
                     '<a class="item">',
                         '<i class="font icon" id="font"></i>',
-                    '</a>',
-                    '<a class="item">',
-                        '<i class="italic icon" id="italic"></i>',
-                    '</a>',
-                    '<a class="item">',
-                        '<i class="bold icon" id="bold"></i>',
-                    '</a>',
+                    '</a>'
+                ].join('')
+                break;
+            case ShapeBoxSuper.Type_Image:
+            default:
+                fontHtml = '';
+        }
+
+        var html = [
+            '<div class="paper-menu paper-menu-'+ this._shapeBox._type +'">',
+                // 'compact'
+                '<div class="ui icon menu">',
+                    fontHtml,
+                    //'<a class="item">',
+                    //    '<i class="italic icon" id="italic"></i>',
+                    //'</a>',
+                    //'<a class="item">',
+                    //    '<i class="bold icon" id="bold"></i>',
+                    //'</a>',
 
                     '<a class="item">',
                         '<i class="copy icon" id="copy"></i>',
@@ -2163,6 +2180,7 @@ $.extend(MenuTool.prototype, {
 
         var that = this;
 
+        // 编辑
         this._$ui.find('#edit').click(function() {
             var getHtml = function() {
                 var attrs = that._element.attrs;
@@ -2218,7 +2236,7 @@ $.extend(MenuTool.prototype, {
         });
 
         // 超链接
-        this._$ui.find('#link').click(function() {
+        this._$ui.find('#linkify').click(function() {
             var dialog = artDialog({
                 title: '提示',
                 content: '<div class="module-link">' +
@@ -2270,7 +2288,7 @@ $.extend(MenuTool.prototype, {
         });
 
         // 设置文本属性
-        this._$ui.find('#fontFamily, #fontSize, #fontColor, #fontBold').click(function() {
+        this._$ui.find('#font').click(function() {
 
             function getFontListHtml() {
                 var FONT_LIST = CONFIG.FONTS;
@@ -2306,6 +2324,13 @@ $.extend(MenuTool.prototype, {
                                 '<option value="red">red</option>' +
                                 '<option value="purple">purple</option>' +
                                 '<option value="orange" selected>orange</option>' +
+                            '</select>' +
+                        '</p>' +
+                        '<p class="row">' +
+                            '是否倾斜：' +
+                            '<select class="j-italic">' +
+                                '<option value="bold">是</option>' +
+                                '<option value="normal">否</option>' +
                             '</select>' +
                         '</p>' +
                         '<p class="row">' +
