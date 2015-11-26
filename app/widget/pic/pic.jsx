@@ -94,7 +94,7 @@ var Pic = React.createClass({
         });
 
         PaperManager.loadImage({
-            imgPath: '../static/img/image2.jpg',
+            imgPath: '../static/img/demo11.jpg',
             imgWidth: 510,
             imgHeight: 682
         });
@@ -116,11 +116,6 @@ var Pic = React.createClass({
             content: '待调试...',
             okValue: '确定'
         }).show();
-    },
-
-    add: function() {
-        "use strict";
-        PaperManager.addText('请输入文本').focus();
     },
 
     render: function() {

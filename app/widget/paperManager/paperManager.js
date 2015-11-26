@@ -12,7 +12,7 @@ var ShapeBox = require('./shapeBox/shapeBox');
 
 var CONFIG = require('./shapeBox/config');
 
-var _public = {
+module.exports = {
     // 画布对象
     _paper: null,
     /**
@@ -31,24 +31,29 @@ var _public = {
 
     loadImage: function(option) {
         "use strict";
-        new ImageShapeBox({
+        var imageShapeBox = new ImageShapeBox({
             paper: this._paper,
             path: option.imgPath,
             width: option.imgWidth,
             height: option.imgHeight
         });
+        return imageShapeBox;
     },
 
     /**
      * @param option
      */
-    addText: function(text, style) {
+    addText: function(option) {
         var textShapeBox = new TextShapeBox({
             paper: this._paper,
-            text: text,
-            fontFamily: style
+            x: option.x,
+            y: option.y,
+            text: option.text,
+            fontFamily: option.fontFamily,
+            fontSize: option.fontSize,
+            fontColor: option.fontColor
         });
-        textShapeBox.selected();
+        return textShapeBox;
     },
 
     /**
@@ -88,7 +93,5 @@ var _public = {
 
     }
 };
-
-module.exports = _public;
 
 

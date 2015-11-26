@@ -28,6 +28,13 @@ MenuTool.COPY_SHIFT_Y = 30;
 
 MenuTool.singleton = null;
 
+MenuTool.isEmptyObject = function(obj) {
+    for ( var name in obj ) {
+        return false;
+    }
+    return true;
+};
+
 MenuTool.obtain = function() {
     "use strict";
     if (!MenuTool.singleton) {
@@ -46,50 +53,37 @@ $.extend(MenuTool.prototype, {
         "use strict";
         var html = [
             '<div class="paper-menu paper-menu-'+ this._shapeBox._type +'">',
-                '<ul class="menu-list">',
+                // 'compact'
+                '<div class="ui icon menu">',
+                    '<a class="item">',
+                        '<i class="edit icon" id="edit"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="font icon" id="font"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="italic icon" id="italic"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="bold icon" id="bold"></i>',
+                    '</a>',
 
-                    // 以下是文本功能
-                    '<li class="item item-text">',
-                        '<a href="javascript:;" id="edit">编辑</a>',
-                    '</li>',
-
-                    '<li class="item item-text">',
-                        '<a href="javascript:;" id="fontFamily">字体</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontSize">',
-                        '<a href="javascript:;">大小</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontColor">',
-                        '<a href="javascript:;">颜色</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontBold">',
-                        '<a href="javascript:;">加粗</a>',
-                    '</li>',
-
-                    // 以下是通用功能
-                    '<li class="item">',
-                        '<a href="javascript:;" id="copy">复制</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="remove">删除</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="link">超链接</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="opacity">透明度</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="rotate">旋转</a>',
-                    '</li>',
-                '</ul>',
+                    '<a class="item">',
+                        '<i class="copy icon" id="copy"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="remove icon" id="remove"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="linkify icon" id="linkify"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="barcode icon" id="opacity"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="repeat icon" id="rotate"></i>',
+                    '</a>',
+                '</div>',
             '</div>'
         ].join('');
         this._$ui = $(html);
@@ -328,12 +322,16 @@ $.extend(MenuTool.prototype, {
 
     _showUi: function() {
         "use strict";
-        this._$ui.css({
-            left: this._x,
-            top: this._y,
-            zIndex: 3
-        });
-        $(this._element.paper.canvas.parentNode).append(this._$ui);
+        // FIXME 移动端不出现这个menuTool
+        if (MenuTool.isEmptyObject($.os)) {
+            this._$ui.css({
+                position: 'absolute',
+                left: this._x,
+                top: this._y,
+                zIndex: 3
+            });
+            $(this._element.paper.canvas.parentNode).append(this._$ui);
+        }
     },
 
     _doText: function() {

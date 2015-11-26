@@ -121,6 +121,12 @@ $.extend(ShapeBox.prototype, {
             that.selected();
         });
 
+        this._element.touchstart(function(event) {
+            event.stopPropagation();
+            console.log('touchstart...');
+            that.selected();
+        });
+
         // 拖拽
         this._element.drag(function(dx, dy, x, y, event) {
             var startX = that._x;
@@ -184,6 +190,11 @@ $.extend(ShapeBox.prototype, {
     getType: function() {
         "use strict";
         return this._type;
+    },
+
+    getElement: function() {
+        "use strict";
+        return this._element;
     },
 
     /**

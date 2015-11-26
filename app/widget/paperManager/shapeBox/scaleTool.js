@@ -25,7 +25,7 @@ ScaleTool.obtain = function() {
     return ScaleTool.singleton;
 };
 
-ScaleTool.RECT_WH = 10;
+ScaleTool.RECT_WH = 20;
 ScaleTool.RECT_PADDING = 5;
 
 $.extend(ScaleTool.prototype, {

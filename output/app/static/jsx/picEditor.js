@@ -1797,7 +1797,7 @@ var ShapeBox = require('./shapeBox/shapeBox');
 
 var CONFIG = require('./shapeBox/config');
 
-var _public = {
+module.exports = {
     // 画布对象
     _paper: null,
     /**
@@ -1873,8 +1873,6 @@ var _public = {
 
     }
 };
-
-module.exports = _public;
 
 
 

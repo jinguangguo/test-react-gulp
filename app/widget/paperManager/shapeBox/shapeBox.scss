@@ -4,147 +4,30 @@
  * @date 2015/11/19
  */
 
-.paper-shape {
-
-    box-sizing: content-box;
-    display: block;
-
-    .handle {
-        position: absolute;
-        z-index: 1001;
-        width: 40px;
-        height: 40px;
-        display: block;
-        &:before {
-            position: absolute;
-            content: '';
-            top: -2px;
-            background: transparent;
-            left: -2px;
-            width: 0;
-            height: 0;
-            border: 9px solid #3f4652;
-            border-right-color: transparent;
-            border-radius: 9px;
-            -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
-        }
-        &:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 0;
-            height: 0;
-            border: 7px solid #fff;
-            border-right-color: transparent;
-            border-radius: 7px;
-            background: transparent;
-            -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
-        }
-        // top-left
-        &-tl {
-            left: -8px;
-            top: -8px;
-            cursor: nwse-resize;
-            &:before {
-
-            }
-            &:after {
-
-            }
-        }
-        // top-right
-        &-tr {
-            right: -34px;
-            top: -8px;
-            cursor: nesw-resize;
-            &:before {
-                -webkit-transform: rotate(135deg);
-                transform: rotate(135deg);
-            }
-            &:after {
-                -webkit-transform: rotate(135deg);
-                transform: rotate(135deg);
-            }
-        }
-        // bottom-right
-        &-br {
-            right: -34px;
-            bottom: -34px;
-            cursor: nwse-resize;
-            &:before {
-                -webkit-transform: rotate(225deg);
-                transform: rotate(225deg);
-            }
-            &:after {
-                -webkit-transform: rotate(225deg);
-                transform: rotate(225deg);
-            }
-        }
-        // bottom-left
-        &-bl {
-            left: -8px;
-            bottom: -34px;
-            cursor: nesw-resize;
-            &:before {
-                -webkit-transform: rotate(315deg);
-                transform: rotate(315deg);
-            }
-            &:after {
-                -webkit-transform: rotate(315deg);
-                transform: rotate(315deg);
-            }
-        }
-    }
-
-    &--hover {
-        border: 1px $border-color-level1 dashed;
-    }
-
-    &-text {
-        .input {
-            display: inline-block;
-            line-height: 1;
-            vertical-align: middle;
-            padding: 0;
-            border: 1px solid #ddd;
-            outline: 0;
-            word-break: break-all;
-        }
-    }
-
-    &-image {
-
-    }
-
-}
-
 .paper-menu {
 
-    position: absolute;
-    background: #fff;
-    border: 1px solid red;
-
-    .menu-list {
-        // 清除浮动
-        overflow: hidden;
-        zoom: 1;
-        .item {
-            float: left;
-            margin-right: 5px;
-        }
-        .item-text {
-            display: none;
-        }
-    }
-
-    &-TEXT {
-        .menu-list {
-            .item {
-                display: block;
-            }
-        }
-    }
+    //position: absolute;
+    //background: #fff;
+    //border: 1px solid red;
+    //
+    //.menu-list {
+    //    // 清除浮动
+    //    overflow: hidden;
+    //    zoom: 1;
+    //    .item {
+    //        float: left;
+    //        margin-right: 5px;
+    //    }
+    //    .item-text {
+    //        display: none;
+    //    }
+    //}
+    //
+    //&-TEXT {
+    //    .menu-list {
+    //        .item {
+    //            display: block;
+    //        }
+    //    }
+    //}
 }

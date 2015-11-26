@@ -99,7 +99,10 @@ var FontFamily = React.createClass({
         var $font = $(React.findDOMNode(event.target));
         var text = $font.data('text');
         var style = $font.data('style');
-        PaperManager.addText(text, style);
+        PaperManager.addText({
+            text: text,
+            fontFamily: style
+        });
     },
 
     render: function() {

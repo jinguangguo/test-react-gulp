@@ -26,8 +26,6 @@
     "underscore": "~1.8.3",
     "canvg": "~1.3.0",
     "react": "~0.14.2",
-    "semantic": "~2.1.6",
-    "artDialog": "https://github.com/aui/artDialog",
-    "normalize-css": "normalize.css#~3.0.3"
+    "semantic": "~2.1.6"
   }
 }

@@ -4,6 +4,10 @@
  * @date 2015/11/25
  */
 
+var CONFIG = require('../../widget/paperManager/shapeBox/config');
+
+var paperManager = require('../../widget/paperManager/paperManager');
+
 // 列表
 var PicList = React.createClass({
 
@@ -40,19 +44,101 @@ var PicList = React.createClass({
 // 详情
 var PicDetail = React.createClass({
 
+    cache: {
+        $module: null,
+        textShapeArray: []
+    },
+
     // 初始化
     getInitialState: function() {
         "use strict";
         return {
-
+            bigText: 'big text',
+            subText: 'sub text'
         };
+    },
+
+    // 已经渲染完成
+    componentDidMount: function() {
+        "use strict";
+        var $module = $(React.findDOMNode(this.refs.module));
+        this.cache.$module = $module;
+
+        // 获取图片的宽高
+        var $paper = $(React.findDOMNode(this.refs.imageBox));
+
+        // 创建paper
+        paperManager.createPaper({
+            container: $paper,
+            width: $paper.width(),
+            height: $paper.height()
+        });
+
+        // 加载图片
+        paperManager.loadImage({
+            imgPath: $paper.find('img').attr('src'),
+            imgWidth: $paper.width(),
+            imgHeight: $paper.height()
+        });
+
+        // 隐藏图片
+        $paper.find('img').remove();
+
+        // 添加文字
+        var text1 = paperManager.addText({
+            x: 100,
+            y: 50,
+            text: 'big test',
+            fontFamily: 'Arial',
+            fontSize: 36
+        });
+
+        // 添加文字
+        var text2 = paperManager.addText({
+            x: 100,
+            y: 100,
+            text: 'sub test',
+            fontFamily: 'Arial',
+            fontSize: 22
+        });
+
+        this.cache.textShapeArray.push(text1);
+        this.cache.textShapeArray.push(text2);
+    },
+
+    handleChange1: function(event) {
+        "use strict";
+        var value = event.target.value;
+        if (CONFIG.DEBUG ===  true) {
+            console.log('handleChange1 value:' + value);
+        }
+        this.setState({
+            bigText: value
+        });
+        this.cache.textShapeArray[0].getElement().attr({
+            text: value
+        });
+    },
+
+    handleChange2: function(event) {
+        "use strict";
+        var value = event.target.value;
+        if (CONFIG.DEBUG ===  true) {
+            console.log('handleChange2 value:' + value);
+        }
+        this.setState({
+            subText: value
+        });
+        this.cache.textShapeArray[1].getElement().attr({
+            text: value
+        });
     },
 
     render: function() {
         "use strict";
         return (
-            <div className="h5pic-detail">
-                <div className="ui container">
+            <div className="h5pic-detail" ref="module">
+                <div className="ui container" ref="imageBox">
                     <img className="ui fluid image" src={this.props.imagePath} />
                 </div>
                 <div className="ui horizontal divider">编辑</div>
@@ -60,12 +146,16 @@ var PicDetail = React.createClass({
                     <div className="ui segments">
                         <div className="ui segment">
                             <div className="ui input fluid">
-                                <input type="text" placeholder="value..." />
+                                <input type="text" placeholder="请输入标题"
+                                       value={this.state.bigText}
+                                       onChange={this.handleChange1} />
                             </div>
                         </div>
                         <div className="ui segment">
                             <div className="ui input fluid">
-                                <input type="text" placeholder="value..." />
+                                <input type="text" placeholder="请输入标题"
+                                       value={this.state.subText}
+                                       onChange={this.handleChange2} />
                             </div>
                         </div>
                     </div>
@@ -158,10 +248,16 @@ var PicPage = React.createClass({
                             <img src="../static/img/demo33.jpg" width="100%" alt=""/>
                         </a>
                         <a href="javascript:;" className="link" onClick={this.toDetailPage}>
-                            <img src="../static/img/image1.jpg" width="100%" alt=""/>
+                            <img src="../static/img/demo44.jpeg" width="100%" alt=""/>
                         </a>
                         <a href="javascript:;" className="link" onClick={this.toDetailPage}>
-                            <img src="../static/img/image2.jpg" width="100%" alt=""/>
+                            <img src="../static/img/demo55.jpeg" width="100%" alt=""/>
+                        </a>
+                        <a href="javascript:;" className="link" onClick={this.toDetailPage}>
+                            <img src="../static/img/demo66.jpeg" width="100%" alt=""/>
+                        </a>
+                        <a href="javascript:;" className="link" onClick={this.toDetailPage}>
+                            <img src="../static/img/demo77.jpg" width="100%" alt=""/>
                         </a>
                     </PicList>
                     :
