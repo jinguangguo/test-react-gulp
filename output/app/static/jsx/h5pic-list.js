@@ -5,6 +5,8 @@
  * @date 2015/11/25
  */
 
+var CONFIG = require('../../widget/paperManager/shapeBox/config');
+
 var paperManager = require('../../widget/paperManager/paperManager');
 
 // 列表
@@ -44,53 +46,100 @@ var PicList = React.createClass({displayName: "PicList",
 var PicDetail = React.createClass({displayName: "PicDetail",
 
     cache: {
-        $module: null
+        $module: null,
+        textShapeArray: []
     },
 
     // 初始化
     getInitialState: function() {
         "use strict";
         return {
-
+            bigText: 'big text',
+            subText: 'sub text'
         };
     },
 
+    // 已经渲染完成
     componentDidMount: function() {
         "use strict";
         var $module = $(React.findDOMNode(this.refs.module));
         this.cache.$module = $module;
-        var $paper = $module.find('.pic-paper');
 
+        // 获取图片的宽高
+        var $paper = $(React.findDOMNode(this.refs.imageBox));
+
+        // 创建paper
         paperManager.createPaper({
             container: $paper,
             width: $paper.width(),
             height: $paper.height()
         });
 
-        // 获取图片的宽高
-        debugger;
-        var $imageBox = $(React.findDOMNode(this.refs.imageBox));
-        // 创建paper
-        paperManager.createPaper({
-            container: $imageBox,
-            width: $imageBox.width(),
-            height: $imageBox.height()
+        // 加载图片
+        paperManager.loadImage({
+            imgPath: $paper.find('img').attr('src'),
+            imgWidth: $paper.width(),
+            imgHeight: $paper.height()
         });
+
+        // 隐藏图片
+        $paper.find('img').remove();
+
         // 添加文字
-        paperManager.addText({
-            x: 50,
+        var text1 = paperManager.addText({
+            x: 100,
             y: 50,
-            text: 'just test',
+            text: 'big test',
             fontFamily: 'Arial',
             fontSize: 36
+        });
+
+        // 添加文字
+        var text2 = paperManager.addText({
+            x: 100,
+            y: 100,
+            text: 'sub test',
+            fontFamily: 'Arial',
+            fontSize: 22
+        });
+
+        this.cache.textShapeArray.push(text1);
+        this.cache.textShapeArray.push(text2);
+    },
+
+    handleChange1: function(event) {
+        "use strict";
+        var value = event.target.value;
+        if (CONFIG.DEBUG ===  true) {
+            console.log('handleChange1 value:' + value);
+        }
+        this.setState({
+            bigText: value
+        });
+        this.cache.textShapeArray[0].getElement().attr({
+            text: value
+        });
+    },
+
+    handleChange2: function(event) {
+        "use strict";
+        var value = event.target.value;
+        if (CONFIG.DEBUG ===  true) {
+            console.log('handleChange2 value:' + value);
+        }
+        this.setState({
+            subText: value
+        });
+        this.cache.textShapeArray[1].getElement().attr({
+            text: value
         });
     },
 
     render: function() {
         "use strict";
         return (
-            React.createElement("div", {className: "h5pic-detail", refs: "module"}, 
-                React.createElement("div", {className: "ui container", refs: "imageBox"}, 
+            React.createElement("div", {className: "h5pic-detail", ref: "module"}, 
+                React.createElement("div", {className: "ui container", ref: "imageBox"}, 
                     React.createElement("img", {className: "ui fluid image", src: this.props.imagePath})
                 ), 
                 React.createElement("div", {className: "ui horizontal divider"}, "编辑"), 
@@ -98,12 +147,16 @@ var PicDetail = React.createClass({displayName: "PicDetail",
                     React.createElement("div", {className: "ui segments"}, 
                         React.createElement("div", {className: "ui segment"}, 
                             React.createElement("div", {className: "ui input fluid"}, 
-                                React.createElement("input", {type: "text", placeholder: "value..."})
+                                React.createElement("input", {type: "text", placeholder: "请输入标题", 
+                                       value: this.state.bigText, 
+                                       onChange: this.handleChange1})
                             )
                         ), 
                         React.createElement("div", {className: "ui segment"}, 
                             React.createElement("div", {className: "ui input fluid"}, 
-                                React.createElement("input", {type: "text", placeholder: "value..."})
+                                React.createElement("input", {type: "text", placeholder: "请输入标题", 
+                                       value: this.state.subText, 
+                                       onChange: this.handleChange2})
                             )
                         )
                     ), 
@@ -196,10 +249,16 @@ var PicPage = React.createClass({displayName: "PicPage",
                             React.createElement("img", {src: "../static/img/demo33.jpg", width: "100%", alt: ""})
                         ), 
                         React.createElement("a", {href: "javascript:;", className: "link", onClick: this.toDetailPage}, 
-                            React.createElement("img", {src: "../static/img/image1.jpg", width: "100%", alt: ""})
+                            React.createElement("img", {src: "../static/img/demo44.jpeg", width: "100%", alt: ""})
                         ), 
                         React.createElement("a", {href: "javascript:;", className: "link", onClick: this.toDetailPage}, 
-                            React.createElement("img", {src: "../static/img/image2.jpg", width: "100%", alt: ""})
+                            React.createElement("img", {src: "../static/img/demo55.jpeg", width: "100%", alt: ""})
+                        ), 
+                        React.createElement("a", {href: "javascript:;", className: "link", onClick: this.toDetailPage}, 
+                            React.createElement("img", {src: "../static/img/demo66.jpeg", width: "100%", alt: ""})
+                        ), 
+                        React.createElement("a", {href: "javascript:;", className: "link", onClick: this.toDetailPage}, 
+                            React.createElement("img", {src: "../static/img/demo77.jpg", width: "100%", alt: ""})
                         )
                     )
                     :
@@ -216,7 +275,7 @@ React.render(
     document.getElementById('main')
 );
 
-},{"../../widget/paperManager/paperManager":5}],2:[function(require,module,exports){
+},{"../../widget/paperManager/paperManager":5,"../../widget/paperManager/shapeBox/config":6}],2:[function(require,module,exports){
 // artDialog - 默认配置
 module.exports = {
 
@@ -1482,24 +1541,29 @@ module.exports = {
 
     loadImage: function(option) {
         "use strict";
-        new ImageShapeBox({
+        var imageShapeBox = new ImageShapeBox({
             paper: this._paper,
             path: option.imgPath,
             width: option.imgWidth,
             height: option.imgHeight
         });
+        return imageShapeBox;
     },
 
     /**
      * @param option
      */
-    addText: function(text, style) {
+    addText: function(option) {
         var textShapeBox = new TextShapeBox({
             paper: this._paper,
-            text: text,
-            fontFamily: style
+            x: option.x,
+            y: option.y,
+            text: option.text,
+            fontFamily: option.fontFamily,
+            fontSize: option.fontSize,
+            fontColor: option.fontColor
         });
-        textShapeBox.selected();
+        return textShapeBox;
     },
 
     /**
@@ -1755,6 +1819,13 @@ MenuTool.COPY_SHIFT_Y = 30;
 
 MenuTool.singleton = null;
 
+MenuTool.isEmptyObject = function(obj) {
+    for ( var name in obj ) {
+        return false;
+    }
+    return true;
+};
+
 MenuTool.obtain = function() {
     "use strict";
     if (!MenuTool.singleton) {
@@ -1773,50 +1844,37 @@ $.extend(MenuTool.prototype, {
         "use strict";
         var html = [
             '<div class="paper-menu paper-menu-'+ this._shapeBox._type +'">',
-                '<ul class="menu-list">',
+                // 'compact'
+                '<div class="ui icon menu">',
+                    '<a class="item">',
+                        '<i class="edit icon" id="edit"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="font icon" id="font"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="italic icon" id="italic"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="bold icon" id="bold"></i>',
+                    '</a>',
 
-                    // 以下是文本功能
-                    '<li class="item item-text">',
-                        '<a href="javascript:;" id="edit">编辑</a>',
-                    '</li>',
-
-                    '<li class="item item-text">',
-                        '<a href="javascript:;" id="fontFamily">字体</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontSize">',
-                        '<a href="javascript:;">大小</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontColor">',
-                        '<a href="javascript:;">颜色</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontBold">',
-                        '<a href="javascript:;">加粗</a>',
-                    '</li>',
-
-                    // 以下是通用功能
-                    '<li class="item">',
-                        '<a href="javascript:;" id="copy">复制</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="remove">删除</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="link">超链接</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="opacity">透明度</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="rotate">旋转</a>',
-                    '</li>',
-                '</ul>',
+                    '<a class="item">',
+                        '<i class="copy icon" id="copy"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="remove icon" id="remove"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="linkify icon" id="linkify"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="barcode icon" id="opacity"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="repeat icon" id="rotate"></i>',
+                    '</a>',
+                '</div>',
             '</div>'
         ].join('');
         this._$ui = $(html);
@@ -2055,12 +2113,16 @@ $.extend(MenuTool.prototype, {
 
     _showUi: function() {
         "use strict";
-        this._$ui.css({
-            left: this._x,
-            top: this._y,
-            zIndex: 3
-        });
-        $(this._element.paper.canvas.parentNode).append(this._$ui);
+        // FIXME 移动端不出现这个menuTool
+        if (MenuTool.isEmptyObject($.os)) {
+            this._$ui.css({
+                position: 'absolute',
+                left: this._x,
+                top: this._y,
+                zIndex: 3
+            });
+            $(this._element.paper.canvas.parentNode).append(this._$ui);
+        }
     },
 
     _doText: function() {
@@ -2130,7 +2192,7 @@ ScaleTool.obtain = function() {
     return ScaleTool.singleton;
 };
 
-ScaleTool.RECT_WH = 10;
+ScaleTool.RECT_WH = 20;
 ScaleTool.RECT_PADDING = 5;
 
 $.extend(ScaleTool.prototype, {
@@ -2596,6 +2658,12 @@ $.extend(ShapeBox.prototype, {
             that.selected();
         });
 
+        this._element.touchstart(function(event) {
+            event.stopPropagation();
+            console.log('touchstart...');
+            that.selected();
+        });
+
         // 拖拽
         this._element.drag(function(dx, dy, x, y, event) {
             var startX = that._x;
@@ -2659,6 +2727,11 @@ $.extend(ShapeBox.prototype, {
     getType: function() {
         "use strict";
         return this._type;
+    },
+
+    getElement: function() {
+        "use strict";
+        return this._element;
     },
 
     /**

@@ -1437,7 +1437,10 @@ var FontFamily = React.createClass({displayName: "FontFamily",
         var $font = $(React.findDOMNode(event.target));
         var text = $font.data('text');
         var style = $font.data('style');
-        PaperManager.addText(text, style);
+        PaperManager.addText({
+            text: text,
+            fontFamily: style
+        });
     },
 
     render: function() {
@@ -1816,24 +1819,29 @@ module.exports = {
 
     loadImage: function(option) {
         "use strict";
-        new ImageShapeBox({
+        var imageShapeBox = new ImageShapeBox({
             paper: this._paper,
             path: option.imgPath,
             width: option.imgWidth,
             height: option.imgHeight
         });
+        return imageShapeBox;
     },
 
     /**
      * @param option
      */
-    addText: function(text, style) {
+    addText: function(option) {
         var textShapeBox = new TextShapeBox({
             paper: this._paper,
-            text: text,
-            fontFamily: style
+            x: option.x,
+            y: option.y,
+            text: option.text,
+            fontFamily: option.fontFamily,
+            fontSize: option.fontSize,
+            fontColor: option.fontColor
         });
-        textShapeBox.selected();
+        return textShapeBox;
     },
 
     /**
@@ -2089,6 +2097,13 @@ MenuTool.COPY_SHIFT_Y = 30;
 
 MenuTool.singleton = null;
 
+MenuTool.isEmptyObject = function(obj) {
+    for ( var name in obj ) {
+        return false;
+    }
+    return true;
+};
+
 MenuTool.obtain = function() {
     "use strict";
     if (!MenuTool.singleton) {
@@ -2107,50 +2122,37 @@ $.extend(MenuTool.prototype, {
         "use strict";
         var html = [
             '<div class="paper-menu paper-menu-'+ this._shapeBox._type +'">',
-                '<ul class="menu-list">',
+                // 'compact'
+                '<div class="ui icon menu">',
+                    '<a class="item">',
+                        '<i class="edit icon" id="edit"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="font icon" id="font"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="italic icon" id="italic"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="bold icon" id="bold"></i>',
+                    '</a>',
 
-                    // 以下是文本功能
-                    '<li class="item item-text">',
-                        '<a href="javascript:;" id="edit">编辑</a>',
-                    '</li>',
-
-                    '<li class="item item-text">',
-                        '<a href="javascript:;" id="fontFamily">字体</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontSize">',
-                        '<a href="javascript:;">大小</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontColor">',
-                        '<a href="javascript:;">颜色</a>',
-                    '</li>',
-
-                    '<li class="item item-text" id="fontBold">',
-                        '<a href="javascript:;">加粗</a>',
-                    '</li>',
-
-                    // 以下是通用功能
-                    '<li class="item">',
-                        '<a href="javascript:;" id="copy">复制</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="remove">删除</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="link">超链接</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="opacity">透明度</a>',
-                    '</li>',
-
-                    '<li class="item">',
-                        '<a href="javascript:;" id="rotate">旋转</a>',
-                    '</li>',
-                '</ul>',
+                    '<a class="item">',
+                        '<i class="copy icon" id="copy"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="remove icon" id="remove"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="linkify icon" id="linkify"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="barcode icon" id="opacity"></i>',
+                    '</a>',
+                    '<a class="item">',
+                        '<i class="repeat icon" id="rotate"></i>',
+                    '</a>',
+                '</div>',
             '</div>'
         ].join('');
         this._$ui = $(html);
@@ -2389,12 +2391,16 @@ $.extend(MenuTool.prototype, {
 
     _showUi: function() {
         "use strict";
-        this._$ui.css({
-            left: this._x,
-            top: this._y,
-            zIndex: 3
-        });
-        $(this._element.paper.canvas.parentNode).append(this._$ui);
+        // FIXME 移动端不出现这个menuTool
+        if (MenuTool.isEmptyObject($.os)) {
+            this._$ui.css({
+                position: 'absolute',
+                left: this._x,
+                top: this._y,
+                zIndex: 3
+            });
+            $(this._element.paper.canvas.parentNode).append(this._$ui);
+        }
     },
 
     _doText: function() {
@@ -2464,7 +2470,7 @@ ScaleTool.obtain = function() {
     return ScaleTool.singleton;
 };
 
-ScaleTool.RECT_WH = 10;
+ScaleTool.RECT_WH = 20;
 ScaleTool.RECT_PADDING = 5;
 
 $.extend(ScaleTool.prototype, {
@@ -2930,6 +2936,12 @@ $.extend(ShapeBox.prototype, {
             that.selected();
         });
 
+        this._element.touchstart(function(event) {
+            event.stopPropagation();
+            console.log('touchstart...');
+            that.selected();
+        });
+
         // 拖拽
         this._element.drag(function(dx, dy, x, y, event) {
             var startX = that._x;
@@ -2993,6 +3005,11 @@ $.extend(ShapeBox.prototype, {
     getType: function() {
         "use strict";
         return this._type;
+    },
+
+    getElement: function() {
+        "use strict";
+        return this._element;
     },
 
     /**
@@ -3268,7 +3285,7 @@ var Pic = React.createClass({displayName: "Pic",
         });
 
         PaperManager.loadImage({
-            imgPath: '../static/img/image2.jpg',
+            imgPath: '../static/img/demo11.jpg',
             imgWidth: 510,
             imgHeight: 682
         });
@@ -3290,11 +3307,6 @@ var Pic = React.createClass({displayName: "Pic",
             content: '待调试...',
             okValue: '确定'
         }).show();
-    },
-
-    add: function() {
-        "use strict";
-        PaperManager.addText('请输入文本').focus();
     },
 
     render: function() {
