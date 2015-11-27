@@ -66,7 +66,7 @@ $.extend(MenuTool.prototype, {
                     '<a class="item">',
                         '<i class="font icon" id="font"></i>',
                     '</a>'
-                ].join('')
+                ].join('');
                 break;
             case ShapeBoxSuper.Type_Image:
             default:

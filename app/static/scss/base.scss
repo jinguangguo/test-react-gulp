@@ -12,6 +12,7 @@
 // 解决chrome12像素大小的限制
 body {
     -webkit-text-size-adjust:none;
+    -webkit-font-smoothing: antialiased;
 }
 
 .main {
