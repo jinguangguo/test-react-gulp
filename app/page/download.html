@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+
+    <meta name="renderer" content="webkit"/>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
+    <title><@page_title/></title>
+
+    <!-- iOS mobile-web-app -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="" />
+
+
+    <!-- Android mobile-web-app -->
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>download</title>
 </head>
 <body>
-<script src="../static/lib/react-v0.14.0-alpha3.js"></script>
-<script src="../static/jsx/download.jsx"></script>
+<!--<script src="../static/lib/react-v0.14.0-alpha3.js"></script>-->
+<!--<script src="../static/jsx/download.jsx"></script>-->
+<script>
+    window.alert('window.innerWidth:' + window.innerWidth);
+    window.alert('window.innerHeight:' + window.innerHeight);
+
+    window.alert('window.innerHeight:' + window.screen.width);
+    window.alert('window.screen.height:' + window.screen.height);
+</script>
 </body>
 </html>
